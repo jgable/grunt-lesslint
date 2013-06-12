@@ -3,6 +3,13 @@
   "version": "0.2.0",
   "description": "Grunt task for validating LESS files with CSS Lint",
   "main": "./tasks/linter.js",
+  "keywords": [
+    "css",
+    "grunt",
+    "gruntplugin",
+    "less",
+    "lint"
+  ],
   "scripts": {
     "prepublish": "grunt clean lint coffee",
     "test": "grunt test"
