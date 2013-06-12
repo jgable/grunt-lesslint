@@ -78,8 +78,8 @@ module.exports = (grunt) ->
 
 
     if errorCount is 0
-      grunt.log.writeln("#{'>>'.green} #{fileCount} files lint free.")
+      grunt.log.writeln("#{'>>'.green} #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')} lint free.")
     else
       grunt.log.writeln()
-      grunt.log.writeln("#{'>>'.red} #{errorCount} linting errors in #{fileCount} files.")
+      grunt.log.writeln("#{'>>'.red} #{errorCount} linting #{grunt.util.pluralize(errorCount, 'error/errors')} in #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')}.")
       false

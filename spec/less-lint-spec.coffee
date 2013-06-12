@@ -24,4 +24,4 @@ describe 'LESS Lint task', ->
       expect(taskOutput).toContain 'margin: 0em;'
       expect(taskOutput).toContain 'border-width: 0pt;'
       expect(taskOutput).toContain '#id {'
-      expect(taskOutput).toContain '4 linting errors in 1 files.'
+      expect(taskOutput).toContain '4 linting errors in 1 file.'
