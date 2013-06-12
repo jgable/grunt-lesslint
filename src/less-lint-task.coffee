@@ -33,6 +33,8 @@ module.exports = (grunt) ->
       fileCount++
 
       less = grunt.file.read(file)
+      continue unless less
+
       parser.parse less, (error, tree) ->
         if error?
           errorCount++
@@ -40,6 +42,8 @@ module.exports = (grunt) ->
           grunt.log.writeln(error.message)
         else
           css = tree.toCSS()
+          return unless css
+
           results = CSSLint.verify(css, rules)
           return unless results.messages?.length > 0
 

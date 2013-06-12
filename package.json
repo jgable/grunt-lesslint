@@ -1,7 +1,7 @@
 {
   "name": "grunt-lesslint",
   "version": "0.0.0",
-  "description": "Grunt task for checking LESS files with CSS Lint",
+  "description": "Grunt task for validating LESS files with CSS Lint",
   "main": "./tasks/linter.js",
   "scripts": {
     "prepublish": "grunt clean lint coffee",
