@@ -56,11 +56,11 @@ module.exports = (grunt) ->
 
             for {line, message, rule} in ruleMessages
               line--
-              lessLineNumber = findLessLineNumber(css, line)
+              lessLineNumber = findLessLineNumber(cssLines, line)
               continue if lessLineNumber < 0
 
               if cssPropertyName = getPropertyName(cssLines[line])
-                lessLineNumber = findPropertyLineNumber(less, lessLineNumber, cssPropertyName)
+                lessLineNumber = findPropertyLineNumber(lessLines, lessLineNumber, cssPropertyName)
                 if lessLineNumber >= 0
                   errorCount++
                   errorPrefix = "#{lessLineNumber + 1} >>".red

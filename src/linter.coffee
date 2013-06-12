@@ -1,3 +1,5 @@
+_ = require 'underscore'
+
 getLessLineNumber = (cssLine='') ->
   if match = /^\s*\/\* line (\d+), .* \*\/\s*$/.exec(cssLine)
     parseInt(match[1]) - 1
@@ -13,13 +15,17 @@ getPropertyName = (line='') ->
     null
 
 findLessLineNumber = (css='', lineNumber=0) ->
-  cssLines = css.split('\n')
-  lineNumber = Math.max(0, Math.min(lineNumber, cssLines.length - 1))
+  if _.isString(css)
+    lines = css.split('\n')
+  else
+    lines = css
+
+  lineNumber = Math.max(0, Math.min(lineNumber, lines.length - 1))
 
   commentLine = lineNumber
   lessLineNumber = -1
   while commentLine >= 0
-    lessLineNumber = getLessLineNumber(cssLines[commentLine])
+    lessLineNumber = getLessLineNumber(lines[commentLine])
     if lessLineNumber >= 0
       return lessLineNumber
     else
@@ -29,7 +35,11 @@ findLessLineNumber = (css='', lineNumber=0) ->
 findPropertyLineNumber = (contents='', lineNumber=0, propertyName='') ->
   return -1 unless contents and propertyName
 
-  lines = contents.split('\n')
+  if _.isString(contents)
+    lines = contents.split('\n')
+  else
+    lines = contents
+
   lineNumber = Math.max(0, Math.min(lineNumber, lines.length - 1))
   while lineNumber < lines.length
     return lineNumber if propertyName is getPropertyName(lines[lineNumber])
