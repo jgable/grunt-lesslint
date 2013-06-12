@@ -57,19 +57,19 @@ module.exports = (grunt) ->
             for {line, message, rule} in ruleMessages
               line--
               lessLineNumber = findLessLineNumber(cssLines, line)
-              continue if lessLineNumber < 0
-
-              if cssPropertyName = getPropertyName(cssLines[line])
-                lessLineNumber = findPropertyLineNumber(lessLines, lessLineNumber, cssPropertyName)
-
-              errorCount++
               if lessLineNumber >= 0
+                if cssPropertyName = getPropertyName(cssLines[line])
+                  propertyNameLineNumber = findPropertyLineNumber(lessLines, lessLineNumber, cssPropertyName)
+                  lessLineNumber = propertyNameLineNumber if propertyNameLineNumber >=0
+
+                errorCount++
                 errorPrefix = "#{lessLineNumber + 1} >>".red
                 grunt.log.writeln("#{errorPrefix} #{lessLines[lessLineNumber].trim()}")
               else
                 errorPrefix = "#{line + 1} >>".red
                 grunt.log.writeln("#{errorPrefix} #{cssLines[line].trim()}")
                 grunt.log.writeln("Failed to find map CSS line #{line + 1} to a LESS line.".yellow)
+
 
     if errorCount is 0
       grunt.log.writeln("#{'>>'.green} #{fileCount} files lint free.")
