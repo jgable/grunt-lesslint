@@ -61,10 +61,13 @@ module.exports = (grunt) ->
 
               if cssPropertyName = getPropertyName(cssLines[line])
                 lessLineNumber = findPropertyLineNumber(lessLines, lessLineNumber, cssPropertyName)
-                if lessLineNumber >= 0
-                  errorCount++
-                  errorPrefix = "#{lessLineNumber + 1} >>".red
-                  grunt.log.writeln("#{errorPrefix} #{lessLines[lessLineNumber].trim()}")
+
+              if lessLineNumber >= 0
+                errorCount++
+                errorPrefix = "#{lessLineNumber + 1} >>".red
+                grunt.log.writeln("#{errorPrefix} #{lessLines[lessLineNumber].trim()}")
+              else
+                grunt.log.writeln("Failed to find map CSS line #{line + 1} to a LESS line".red)
 
     if errorCount is 0
       grunt.log.writeln("#{'>>'.green} #{fileCount} files lint free.")
