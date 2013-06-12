@@ -19,7 +19,12 @@
     "name": "Kevin Sawicki",
     "email": "kevinsawicki@gmail.com"
   },
-  "license": "MIT",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/kevinsawicki/grunt-lesslint/raw/master/LICENSE.md"
+    }
+  ],
   "devDependencies": {
     "jasmine-focused": "~0.2.0",
     "grunt": "~0.4.1",
