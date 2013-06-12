@@ -4,6 +4,7 @@
   "description": "Grunt task for checking LESS files with CSS Lint",
   "main": "./tasks/linter.js",
   "scripts": {
+    "prepublish": "grunt clean lint coffee",
     "test": "grunt test"
   },
   "repository": {
