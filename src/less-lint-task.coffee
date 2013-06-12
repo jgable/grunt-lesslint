@@ -69,17 +69,16 @@ module.exports = (grunt) ->
                   lessLineNumber = propertyNameLineNumber if propertyNameLineNumber >=0
 
                 errorCount++
-                errorPrefix = "#{lessLineNumber + 1} >>".red
-                grunt.log.writeln("#{errorPrefix} #{lessLines[lessLineNumber].trim()}")
+                errorPrefix = "#{lessLineNumber + 1}:".yellow
+                grunt.log.error("#{errorPrefix} #{lessLines[lessLineNumber].trim()}")
               else
-                errorPrefix = "#{line + 1} >>".red
-                grunt.log.writeln("#{errorPrefix} #{cssLines[line].trim()}")
+                errorPrefix = "#{line + 1}:".yellow
+                grunt.log.error("#{errorPrefix} #{cssLines[line].trim()}")
                 grunt.log.writeln("Failed to find map CSS line #{line + 1} to a LESS line.".yellow)
 
-
     if errorCount is 0
-      grunt.log.writeln("#{'>>'.green} #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')} lint free.")
+      grunt.log.ok("#{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')} lint free.")
     else
       grunt.log.writeln()
-      grunt.log.writeln("#{'>>'.red} #{errorCount} linting #{grunt.util.pluralize(errorCount, 'error/errors')} in #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')}.")
+      grunt.log.error("#{errorCount} linting #{grunt.util.pluralize(errorCount, 'error/errors')} in #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')}.")
       false
