@@ -1,6 +1,6 @@
 fs = require 'fs'
 path = require 'path'
-linter = require '../tasks/linter-utils'
+linter = require '../tasks/lint-utils'
 
 describe 'lint-utils', ->
   describe '.findLessLineNumber()', ->
