@@ -6,9 +6,19 @@
   "scripts": {
     "test": "grunt test"
   },
-  "repository": "",
-  "author": "",
-  "license": "BSD",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kevinsawicki/grunt-lesslint.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kevinsawicki/grunt-lesslint/issues"
+  },
+  "homepage": "http://kevinsawicki.github.io/grunt-lesslint",
+  "author": {
+    "name": "Kevin Sawicki",
+    "email": "kevinsawicki@gmail.com"
+  },
+  "license": "MIT",
   "devDependencies": {
     "jasmine-focused": "~0.2.0",
     "grunt": "~0.4.1",
