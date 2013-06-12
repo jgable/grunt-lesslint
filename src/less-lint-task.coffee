@@ -52,7 +52,7 @@ module.exports = (grunt) ->
           for ruleMessage, ruleMessages of messages
             rule = ruleMessages[0].rule
             grunt.log.writeln(ruleMessage + " (#{rule.id})".grey)
-            grunt.log.writeln(rule.desc) if rule.desc and rule.desc isnt ruleMessages
+            grunt.log.writeln(rule.desc) if rule.desc and rule.desc isnt ruleMessage
 
             for {line, message, rule} in ruleMessages
               line--
