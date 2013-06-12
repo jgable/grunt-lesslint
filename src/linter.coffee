@@ -23,4 +23,4 @@ findLessLineNumber = (css='', lineNumber=0) ->
     return lessLineNumber if lessLineNumber >= 0
   -1
 
-module.exports = {getLessLineNumber, getPropertyName, findLessLineNumber}
+module.exports = {getPropertyName, findLessLineNumber}
