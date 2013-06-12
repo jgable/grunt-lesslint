@@ -56,6 +56,8 @@ module.exports = (grunt) ->
 
             for {line, message, rule} in ruleMessages
               line--
+              continue unless line >=0
+
               lessLineNumber = findLessLineNumber(cssLines, line)
               if lessLineNumber >= 0
                 if cssPropertyName = getPropertyName(cssLines[line])
