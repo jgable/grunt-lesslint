@@ -58,8 +58,7 @@ less:
 > grunt lesslint
 Running "lesslint" (lesslint) task
 static/editor.less (1)
-Values of 0 shouldn't have units specified. (zero-units)
-You don't need to specify units when a value is 0.
+Values of 0 shouldn't have units specified. You don't need to specify units when a value is 0. (zero-units)
 >> 14: line-height: 0px;
 
 >> 1 linting error in 56 files.

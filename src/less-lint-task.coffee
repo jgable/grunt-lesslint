@@ -55,8 +55,9 @@ module.exports = (grunt) ->
           messages = _.groupBy results.messages, (message) -> message.message
           for ruleMessage, ruleMessages of messages
             rule = ruleMessages[0].rule
-            grunt.log.writeln(ruleMessage + " (#{rule.id})".grey)
-            grunt.log.writeln(rule.desc) if rule.desc and rule.desc isnt ruleMessage
+            fullRuleMessage = "#{ruleMessage} "
+            fullRuleMessage += "#{rule.desc} " if rule.desc and rule.desc isnt ruleMessage
+            grunt.log.writeln(fullRuleMessage + "(#{rule.id})".grey)
 
             for {line, message, rule} in ruleMessages
               line--
