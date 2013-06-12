@@ -20,7 +20,10 @@ findLessLineNumber = (css='', lineNumber=0) ->
   lessLineNumber = -1
   while commentLine >= 0
     lessLineNumber = getLessLineNumber(cssLines[commentLine])
-    return lessLineNumber if lessLineNumber >= 0
+    if lessLineNumber >= 0
+      return lessLineNumber
+    else
+      commentLine--
   -1
 
 findPropertyLineNumber = (contents='', lineNumber=0, propertyName='') ->
