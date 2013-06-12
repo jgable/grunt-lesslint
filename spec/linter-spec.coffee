@@ -37,6 +37,11 @@ describe 'linter', ->
       expect(linter.getPropertyName(less[7])).toBe 'border-width'
       expect(linter.getPropertyName(less[8])).toBe null
       expect(linter.getPropertyName(less[9])).toBe null
+      expect(linter.getPropertyName(less[10])).toBe null
+      expect(linter.getPropertyName(less[11])).toBe 'height'
+      expect(linter.getPropertyName(less[12])).toBe null
+      expect(linter.getPropertyName(less[13])).toBe null
+      expect(linter.getPropertyName(less[14])).toBe 'width'
 
   describe '.findPropertyLineNumber()', ->
     it 'returns the line number of the next line with the given property name', ->

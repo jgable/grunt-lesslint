@@ -10,7 +10,10 @@ getPropertyName = (line='') ->
   line = line.trim()
   colon = line.indexOf(':')
   if colon > 0
-    line.substring(0, colon)
+    propertyName = line.substring(0, colon)
+    curly = propertyName.indexOf('{')
+    propertyName = propertyName.substring(curly + 1).trim() unless curly is -1
+    propertyName
   else
     null
 
