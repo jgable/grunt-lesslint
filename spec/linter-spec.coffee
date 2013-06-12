@@ -37,3 +37,12 @@ describe 'linter', ->
       expect(linter.getPropertyName(less[7])).toBe 'border-width'
       expect(linter.getPropertyName(less[8])).toBe null
       expect(linter.getPropertyName(less[9])).toBe null
+
+  describe '.findPropertyLineNumber()', ->
+    it 'returns the line number of the next line with the given property name', ->
+      less = fs.readFileSync(path.join(__dirname, 'fixtures', 'file.less'), 'utf8')
+      expect(linter.findPropertyLineNumber(less, 0, 'padding')).toBe 1
+      expect(linter.findPropertyLineNumber(less, 2, 'padding')).toBe -1
+      expect(linter.findPropertyLineNumber(less, 4, 'margin')).toBe 4
+      expect(linter.findPropertyLineNumber(less, null, 'border-width')).toBe 7
+      expect(linter.findPropertyLineNumber(less, Infinity, 'border-width')).toBe -1

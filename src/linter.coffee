@@ -23,4 +23,14 @@ findLessLineNumber = (css='', lineNumber=0) ->
     return lessLineNumber if lessLineNumber >= 0
   -1
 
-module.exports = {getPropertyName, findLessLineNumber}
+findPropertyLineNumber = (contents='', lineNumber=0, propertyName='') ->
+  return -1 unless contents and propertyName
+
+  lines = contents.split('\n')
+  lineNumber = Math.max(0, Math.min(lineNumber, lines.length - 1))
+  while lineNumber < lines.length
+    return lineNumber if propertyName is getPropertyName(lines[lineNumber])
+    lineNumber++
+  -1
+
+module.exports = {getPropertyName, findLessLineNumber, findPropertyLineNumber}
