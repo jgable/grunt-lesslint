@@ -8,6 +8,8 @@ getLessLineNumber = (cssLine='') ->
 
 getPropertyName = (line='') ->
   line = line.trim()
+  return null if line[0..1] is '/*'
+
   colon = line.indexOf(':')
   if colon > 0
     propertyName = line.substring(0, colon)
