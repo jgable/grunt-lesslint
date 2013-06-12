@@ -33,7 +33,7 @@ module.exports = (grunt) ->
       fileCount++
 
       less = grunt.file.read(file)
-      continue unless less
+      return unless less
 
       parser.parse less, (error, tree) ->
         if error?
