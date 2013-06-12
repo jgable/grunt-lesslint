@@ -1,7 +1,7 @@
 {CSSLint} = require 'csslint'
 {Parser} = require 'less'
 _ = require 'underscore'
-{findLessLineNumber, findPropertyLineNumber, getPropertyName} = require './linter'
+{findLessLineNumber, findPropertyLineNumber, getPropertyName} = require './lint-utils'
 
 defaultLessOptions =
   compress: false

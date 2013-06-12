@@ -1,8 +1,8 @@
 fs = require 'fs'
 path = require 'path'
-linter = require '../tasks/linter'
+linter = require '../tasks/linter-utils'
 
-describe 'linter', ->
+describe 'lint-utils', ->
   describe '.findLessLineNumber()', ->
     it 'returns the line number from the comment', ->
       css = fs.readFileSync(path.join(__dirname, 'fixtures', 'file.css'), 'utf8')
