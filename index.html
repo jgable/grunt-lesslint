@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>grunt-lesslint by kevinsawicki</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>grunt-lesslint</h1>
+        <p>Lint LESS files with Grunt</p>
+
+        <p class="view"><a href="https://github.com/kevinsawicki/grunt-lesslint">View the Project on GitHub <small>kevinsawicki/grunt-lesslint</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/kevinsawicki/grunt-lesslint/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/kevinsawicki/grunt-lesslint/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/kevinsawicki/grunt-lesslint">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="less-lint-grunt-plugin-" class="anchor" href="#less-lint-grunt-plugin-"><span class="octicon octicon-link"></span></a>LESS Lint Grunt plugin <a href="https://travis-ci.org/kevinsawicki/grunt-lesslint"><img src="https://travis-ci.org/kevinsawicki/grunt-lesslint.png" alt="Build Status"></a>
+</h1>
+
+<p>Lint your <a href="http://lesscss.org/">LESS</a> files using
+<a href="http://csslint.net/">CSS Lint</a> from <a href="http://gruntjs.com/">Grunt</a>.</p>
+
+<p>This plugin compiles LESS files to CSS and then runs the CSS through CSS Lint
+and then maps the error output from CSS Lint back to the original LESS
+line number.</p>
+
+<h2>
+<a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
+
+<div class="highlight"><pre>npm install grunt-lesslint
+</pre></div>
+
+<h2>
+<a name="building" class="anchor" href="#building"><span class="octicon octicon-link"></span></a>Building</h2>
+
+<ul>
+<li>Clone the repository</li>
+<li>Run <code>npm install</code>
+</li>
+<li>Run <code>grunt</code> to compile the CoffeeScript code</li>
+<li>Run <code>grunt test</code> to run the specs</li>
+</ul><h2>
+<a name="configuring" class="anchor" href="#configuring"><span class="octicon octicon-link"></span></a>Configuring</h2>
+
+<p>Add the following to your <code>Gruntfile.coffee</code>:</p>
+
+<div class="highlight"><pre><span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span>
+  <span class="nv">lesslint:</span>
+    <span class="nv">src: </span><span class="p">[</span><span class="s">'src/**/*.less'</span><span class="p">]</span>
+
+<span class="nx">grunt</span><span class="p">.</span><span class="nx">loadNpmTasks</span><span class="p">(</span><span class="s">'grunt-lesslint'</span><span class="p">)</span>
+</pre></div>
+
+<p>Then simply run <code>grunt lesslint</code> to lint all the <code>.less</code> files under <code>src/</code>.</p>
+
+<p>By default the plugin uses the <code>less</code> and <code>csslint</code> config settings to
+configure the LESS parser and the CSS Lint validator.</p>
+
+<p>You can configure the CSS Lint validator, such as for disabling certain rules,
+by adding a <code>csslint</code> config value:</p>
+
+<div class="highlight"><pre><span class="nv">csslint:</span>
+  <span class="s">'known-properties'</span><span class="o">:</span> <span class="kc">false</span>
+</pre></div>
+
+<p>You can configure the LESS parser, such as for adding include paths,
+by adding a <code>less</code> config value:</p>
+
+<div class="highlight"><pre><span class="nv">less:</span>
+  <span class="nv">paths: </span><span class="p">[</span><span class="s">'includes'</span><span class="p">]</span>
+</pre></div>
+
+<h2>
+<a name="example-output" class="anchor" href="#example-output"><span class="octicon octicon-link"></span></a>Example output</h2>
+
+<pre><code>&gt; grunt lesslint
+Running "lesslint" (lesslint) task
+static/editor.less (1)
+Values of 0 shouldn't have units specified. You don't need to specify units when a value is 0. (zero-units)
+&gt;&gt; 14: line-height: 0px;
+
+&gt;&gt; 1 linting error in 56 files.
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/kevinsawicki">kevinsawicki</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
