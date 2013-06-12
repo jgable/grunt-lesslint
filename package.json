@@ -1,0 +1,26 @@
+{
+  "name": "grunt-lesslint",
+  "version": "0.0.0",
+  "description": "Grunt task for checking LESS files with CSS Lint",
+  "main": "./task/less-lint.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": "",
+  "author": "",
+  "license": "BSD",
+  "devDependencies": {
+    "jasmine-focused": "~0.2.0",
+    "grunt": "~0.4.1",
+    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-cli": "~0.1.9",
+    "grunt-shell": "~0.2.2",
+    "rimraf": "~2.1.4",
+    "grunt-coffeelint": "0.0.6"
+  },
+  "dependencies": {
+    "csslint": "~0.9.10",
+    "less": "~1.4.0",
+    "underscore": "~1.4.4"
+  }
+}
