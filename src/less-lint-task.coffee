@@ -7,6 +7,7 @@ defaultLessOptions =
   compress: false
   dumpLineNumbers: 'comments'
   optimization: null
+  syncImport: true
   yuicompress: false
 
 module.exports = (grunt) ->
