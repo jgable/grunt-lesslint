@@ -10,14 +10,13 @@ describe 'LESS Lint task', ->
         src: ['**/fixtures/*.less']
 
     grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
-    called = false
-    grunt.registerTask 'done', 'done',  ->
-      called = true
+    tasksDone = false
+    grunt.registerTask 'done', 'done',  -> tasksDone = true
     output = []
     spyOn(process.stdout, 'write').andCallFake (data='') ->
       output.push(data.toString())
     grunt.task.run(['lesslint', 'done']).start()
-    waitsFor -> called
+    waitsFor -> tasksDone
     runs ->
       taskOutput = output.join('')
       expect(taskOutput).toContain 'padding: 0px;'
