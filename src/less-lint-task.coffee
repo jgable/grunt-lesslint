@@ -25,6 +25,10 @@ parseLess = (grunt, file, options, callback) ->
     callback(null, '', '')
 
 lintCss = (grunt, css, options, callback) ->
+  unless css
+    callback(null, [])
+    return
+
   rules = {}
   CSSLint.getRules().forEach ({id}) -> rules[id] = 1
 
@@ -91,9 +95,9 @@ module.exports = (grunt) ->
 
               for {line} in ruleMessages
                 line--
+                errorCount++
                 continue unless line >= 0
 
-                errorCount++
                 lessLineNumber = getLessLineNumber(css, less, line)
                 if lessLineNumber >= 0
                   errorPrefix = "#{lessLineNumber + 1}:".yellow
