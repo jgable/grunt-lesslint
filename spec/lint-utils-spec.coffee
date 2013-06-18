@@ -3,11 +3,13 @@ path = require 'path'
 linter = require '../tasks/lint-utils'
 
 describe 'lint-utils', ->
-  describe '.findLessLineNumber()', ->
-    it 'returns the line number from the comment', ->
+  describe '.findLessMapping()', ->
+    it 'returns the line number and path from the comment', ->
       css = fs.readFileSync(path.join(__dirname, 'fixtures', 'file.css'), 'utf8')
-      expect(linter.findLessLineNumber(css, 0)).toBe 0
-      expect(linter.findLessLineNumber(css, 5)).toBe 6
+      expect(linter.findLessMapping(css, 0).lineNumber).toBe 0
+      expect(linter.findLessMapping(css, 0).filePath).toBe '/repos/grunt-lesslint/spec/fixtures/file.less'
+      expect(linter.findLessMapping(css, 5).lineNumber).toBe 6
+      expect(linter.findLessMapping(css, 5).filePath).toBe '/repos/grunt-lesslint/spec/fixtures/imports.less'
 
   describe '.getPropertyName()', ->
     it 'returns the property on the given line', ->

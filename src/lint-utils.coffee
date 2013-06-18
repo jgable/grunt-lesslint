@@ -1,11 +1,5 @@
 _ = require 'underscore'
 
-getLessLineNumber = (cssLine='') ->
-  if match = /^\s*\/\* line (\d+), .* \*\/\s*$/.exec(cssLine)
-    parseInt(match[1]) - 1
-  else
-    -1
-
 getPropertyName = (line='') ->
   line = line.trim()
   return null if line[0..1] is '/*'
@@ -19,7 +13,7 @@ getPropertyName = (line='') ->
   else
     null
 
-findLessLineNumber = (css='', lineNumber=0) ->
+findLessMapping = (css='', lineNumber=0) ->
   if _.isString(css)
     lines = css.split('\n')
   else
@@ -30,12 +24,14 @@ findLessLineNumber = (css='', lineNumber=0) ->
   commentLine = lineNumber
   lessLineNumber = -1
   while commentLine >= 0
-    lessLineNumber = getLessLineNumber(lines[commentLine])
-    if lessLineNumber >= 0
-      return lessLineNumber
-    else
-      commentLine--
-  -1
+    if match = /^\s*\/\* line (\d+), (.+) \*\/\s*$/.exec(lines[commentLine])
+      lineNumber = parseInt(match[1]) - 1
+      filePath = match[2]
+      return {lineNumber, filePath}
+
+    commentLine--
+
+  {lineNumber: -1, filePath: null}
 
 findPropertyLineNumber = (contents='', lineNumber=0, propertyName='') ->
   return -1 unless contents and propertyName
@@ -51,4 +47,4 @@ findPropertyLineNumber = (contents='', lineNumber=0, propertyName='') ->
     lineNumber++
   -1
 
-module.exports = {getPropertyName, findLessLineNumber, findPropertyLineNumber}
+module.exports = {getPropertyName, findLessMapping, findPropertyLineNumber}

@@ -1,7 +1,8 @@
 {CSSLint} = require 'csslint'
 {Parser} = require 'less'
-{findLessLineNumber, findPropertyLineNumber, getPropertyName} = require './lint-utils'
+{findLessMapping, findPropertyLineNumber, getPropertyName} = require './lint-utils'
 async = require 'async'
+path = require 'path'
 
 defaultLessOptions =
   compress: false
@@ -45,22 +46,27 @@ lintCss = (grunt, css, options, callback) ->
   else
     callback(null, [])
 
-getLessLineNumber = (css, less, line) ->
+getLessLineNumber = (css, less, file, line) ->
   cssLines = css.split('\n')
-  if 0 <= line < cssLines.length
-    lessLineNumber = findLessLineNumber(cssLines, line)
-    lessLines = less.split('\n')
-    if 0 <= lessLineNumber < lessLines.length
-      if cssPropertyName = getPropertyName(cssLines[line])
-        propertyNameLineNumber = findPropertyLineNumber(lessLines, lessLineNumber, cssPropertyName)
-        lessLineNumber = propertyNameLineNumber if propertyNameLineNumber >= 0
+  return -1 unless 0 <= line < cssLines.length
 
-    if 0 <= lessLineNumber < lessLines.length
-      lessLineNumber
-    else
-      -1
+  {lineNumber, filePath} = findLessMapping(cssLines, line)
+  return -1 unless filePath is path.resolve(process.cwd(), file)
+
+  lessLines = less.split('\n')
+  if 0 <= lineNumber < lessLines.length
+    if cssPropertyName = getPropertyName(cssLines[line])
+      propertyNameLineNumber = findPropertyLineNumber(lessLines, lineNumber, cssPropertyName)
+      lineNumber = propertyNameLineNumber if propertyNameLineNumber >= 0
+
+  if 0 <= lineNumber < lessLines.length
+    lineNumber
   else
     -1
+
+isFileError = (file, css, line) ->
+  {filePath} = findLessMapping(css, line)
+  filePath is path.resolve(process.cwd(), file)
 
 module.exports = (grunt) ->
   grunt.registerMultiTask 'lesslint', 'Validate LESS files with CSS Lint', ->
@@ -80,12 +86,13 @@ module.exports = (grunt) ->
           return
 
         lintCss grunt, css, options, (error, messages=[]) ->
+          messages = messages.filter (message) ->
+            isFileError(file, css, message.line - 1)
+
           if messages.length > 0
             grunt.log.writeln("#{file.yellow} (#{messages.length})")
 
             lessLines = less.split('\n')
-
-
             messages = grunt.util._.groupBy messages, ({message}) -> message
             for ruleMessage, ruleMessages of messages
               rule = ruleMessages[0].rule
@@ -98,7 +105,7 @@ module.exports = (grunt) ->
                 errorCount++
                 continue unless line >= 0
 
-                lessLineNumber = getLessLineNumber(css, less, line)
+                lessLineNumber = getLessLineNumber(css, less, file, line)
                 if lessLineNumber >= 0
                   errorPrefix = "#{lessLineNumber + 1}:".yellow
                   grunt.log.error("#{errorPrefix} #{lessLines[lessLineNumber].trim()}")
