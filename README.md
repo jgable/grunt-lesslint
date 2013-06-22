@@ -3,9 +3,8 @@
 Lint your [LESS](http://lesscss.org/) files using
 [CSS Lint](http://csslint.net/) from [Grunt](http://gruntjs.com/).
 
-This plugin compiles LESS files to CSS and then runs the CSS through CSS Lint
-and then maps the error output from CSS Lint back to the original LESS
-line number.
+This plugin compiles your LESS files, runs the generated CSS through CSS Lint,
+and outputs the offending LESS line for any CSS Lint errors found.
 
 ## Installing
 
@@ -31,7 +30,7 @@ grunt.initConfig
 grunt.loadNpmTasks('grunt-lesslint')
 ```
 
-Then simply run `grunt lesslint` to lint all the `.less` files under `src/`.
+Then run `grunt lesslint` to lint all the `.less` files under `src/`.
 
 By default the plugin uses the `less` and `csslint` config settings to
 configure the LESS parser and the CSS Lint validator.
