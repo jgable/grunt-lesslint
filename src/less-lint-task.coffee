@@ -102,7 +102,7 @@ module.exports = (grunt) ->
               for {line} in ruleMessages
                 line--
                 errorCount++
-                continue unless line >= 0
+                continue if line < 0
 
                 lessLineNumber = getLessLineNumber(css, less, file, line)
                 if lessLineNumber >= 0
