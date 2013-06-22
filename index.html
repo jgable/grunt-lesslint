@@ -35,9 +35,8 @@
 <p>Lint your <a href="http://lesscss.org/">LESS</a> files using
 <a href="http://csslint.net/">CSS Lint</a> from <a href="http://gruntjs.com/">Grunt</a>.</p>
 
-<p>This plugin compiles LESS files to CSS and then runs the CSS through CSS Lint
-and then maps the error output from CSS Lint back to the original LESS
-line number.</p>
+<p>This plugin compiles your LESS files, runs the generated CSS through CSS Lint,
+and outputs the offending LESS line for any CSS Lint errors found.</p>
 
 <h2>
 <a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
@@ -66,10 +65,10 @@ line number.</p>
 <span class="nx">grunt</span><span class="p">.</span><span class="nx">loadNpmTasks</span><span class="p">(</span><span class="s">'grunt-lesslint'</span><span class="p">)</span>
 </pre></div>
 
-<p>Then simply run <code>grunt lesslint</code> to lint all the <code>.less</code> files under <code>src/</code>.</p>
+<p>Then run <code>grunt lesslint</code> to lint all the <code>.less</code> files under <code>src/</code>.</p>
 
 <p>By default the plugin uses the <code>less</code> and <code>csslint</code> config settings to
-configure the LESS parser and the CSS Lint validator.</p>
+configure the LESS parser and the CSS Lint validatorg.</p>
 
 <p>You can configure the CSS Lint validator, such as for disabling certain rules,
 by adding a <code>csslint</code> config value:</p>
