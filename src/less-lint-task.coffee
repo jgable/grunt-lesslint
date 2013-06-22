@@ -92,7 +92,6 @@ module.exports = (grunt) ->
           if messages.length > 0
             grunt.log.writeln("#{file.yellow} (#{messages.length})")
 
-            lessLines = less.split('\n')
             messages = grunt.util._.groupBy messages, ({message}) -> message
             for ruleMessage, ruleMessages of messages
               rule = ruleMessages[0].rule
@@ -108,7 +107,7 @@ module.exports = (grunt) ->
                 lessLineNumber = getLessLineNumber(css, less, file, line)
                 if lessLineNumber >= 0
                   errorPrefix = "#{lessLineNumber + 1}:".yellow
-                  grunt.log.error("#{errorPrefix} #{lessLines[lessLineNumber].trim()}")
+                  grunt.log.error("#{errorPrefix} #{less.split('\n')[lessLineNumber].trim()}")
                 else
                   cssLine = css.split('\n')[line]
                   if cssLine?
