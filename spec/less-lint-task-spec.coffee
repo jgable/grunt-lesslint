@@ -23,7 +23,7 @@ describe 'LESS Lint task', ->
       expect(taskOutput).toContain 'margin: 0em;'
       expect(taskOutput).toContain 'border-width: 0pt;'
       expect(taskOutput).toContain '#id {'
-      expect(taskOutput).toContain '4 linting errors in 1 file.'
+      expect(taskOutput).toContain '4 lint errors in 1 file.'
 
   describe 'when the less file is empty', ->
     it 'does not log an error', ->

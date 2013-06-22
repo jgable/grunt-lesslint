@@ -128,5 +128,5 @@ module.exports = (grunt) ->
         done()
       else
         grunt.log.writeln()
-        grunt.log.error("#{errorCount} linting #{grunt.util.pluralize(errorCount, 'error/errors')} in #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')}.")
+        grunt.log.error("#{errorCount} lint #{grunt.util.pluralize(errorCount, 'error/errors')} in #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')}.")
         done(false)
