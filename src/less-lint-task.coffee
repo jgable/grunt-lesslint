@@ -11,60 +11,60 @@ defaultLessOptions =
   syncImport: true
   yuicompress: false
 
-parseLess = (grunt, file, options, callback) ->
-  configLessOptions = options.less ? grunt.config.get('less.options')
-  lessOptions = grunt.util._.extend({filename: file}, configLessOptions, defaultLessOptions)
-
-  if less = grunt.file.read(file)
-    parser = new Parser(lessOptions)
-    parser.parse less, (error, tree) ->
-      if error?
-        callback(error)
-      else
-        callback(null, less, tree.toCSS())
-  else
-    callback(null, '', '')
-
-lintCss = (grunt, css, options, callback) ->
-  unless css
-    callback(null, [])
-    return
-
-  rules = {}
-  CSSLint.getRules().forEach ({id}) -> rules[id] = 1
-
-  cssLintOptions = options.csslint ? grunt.config.get('csslint.options')
-  for id, enabled of cssLintOptions
-    if cssLintOptions[id]
-      rules[id] = cssLintOptions[id]
-    else
-      delete rules[id]
-
-  results = CSSLint.verify(css, rules)
-  if results.messages?.length > 0
-    callback(null, results.messages)
-  else
-    callback(null, [])
-
-getLessLineNumber = (css, less, file, line) ->
-  cssLines = css.split('\n')
-  return -1 unless 0 <= line < cssLines.length
-
-  {lineNumber, filePath} = findLessMapping(cssLines, line)
-  return -1 unless filePath is path.resolve(process.cwd(), file)
-
-  lessLines = less.split('\n')
-  if 0 <= lineNumber < lessLines.length
-    if cssPropertyName = getPropertyName(cssLines[line])
-      propertyNameLineNumber = findPropertyLineNumber(lessLines, lineNumber, cssPropertyName)
-      lineNumber = propertyNameLineNumber if propertyNameLineNumber >= 0
-
-  if 0 <= lineNumber < lessLines.length
-    lineNumber
-  else
-    -1
-
 module.exports = (grunt) ->
+  parseLess = (file, options, callback) ->
+    configLessOptions = options.less ? grunt.config.get('less.options')
+    lessOptions = grunt.util._.extend({filename: file}, configLessOptions, defaultLessOptions)
+
+    if less = grunt.file.read(file)
+      parser = new Parser(lessOptions)
+      parser.parse less, (error, tree) ->
+        if error?
+          callback(error)
+        else
+          callback(null, less, tree.toCSS())
+    else
+      callback(null, '', '')
+
+  lintCss = (css, options, callback) ->
+    unless css
+      callback(null, [])
+      return
+
+    rules = {}
+    CSSLint.getRules().forEach ({id}) -> rules[id] = 1
+
+    cssLintOptions = options.csslint ? grunt.config.get('csslint.options')
+    for id, enabled of cssLintOptions
+      if cssLintOptions[id]
+        rules[id] = cssLintOptions[id]
+      else
+        delete rules[id]
+
+    results = CSSLint.verify(css, rules)
+    if results.messages?.length > 0
+      callback(null, results.messages)
+    else
+      callback(null, [])
+
+  getLessLineNumber = (css, less, file, line) ->
+    cssLines = css.split('\n')
+    return -1 unless 0 <= line < cssLines.length
+
+    {lineNumber, filePath} = findLessMapping(cssLines, line)
+    return -1 unless filePath is path.resolve(process.cwd(), file)
+
+    lessLines = less.split('\n')
+    if 0 <= lineNumber < lessLines.length
+      if cssPropertyName = getPropertyName(cssLines[line])
+        propertyNameLineNumber = findPropertyLineNumber(lessLines, lineNumber, cssPropertyName)
+        lineNumber = propertyNameLineNumber if propertyNameLineNumber >= 0
+
+    if 0 <= lineNumber < lessLines.length
+      lineNumber
+    else
+      -1
+
   isFileError = (file, css, line, importsToLint) ->
     {filePath} = findLessMapping(css, line)
     filePath is path.resolve(process.cwd(), file) or
@@ -80,14 +80,14 @@ module.exports = (grunt) ->
       grunt.verbose.write("Linting '#{file}'")
       fileCount++
 
-      parseLess grunt, file, options, (error, less, css) ->
+      parseLess file, options, (error, less, css) ->
         if error?
           errorCount++
           grunt.log.writeln("Error parsing #{file.yellow}")
           grunt.log.writeln(error.message)
           return
 
-        lintCss grunt, css, options, (error, messages=[]) ->
+        lintCss css, options, (error, messages=[]) ->
           messages = messages.filter (message) ->
             isFileError(file, css, message.line - 1, importsToLint)
 
