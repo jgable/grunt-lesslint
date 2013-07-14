@@ -35,6 +35,8 @@ Then run `grunt lesslint` to lint all the `.less` files under `src/`.
 By default the plugin uses the `less` and `csslint` config settings to
 configure the LESS parser and the CSS Lint validator.
 
+### CSS Lint
+
 You can configure the CSS Lint validator, such as for disabling certain rules,
 by adding a `csslint` config value:
 
@@ -42,6 +44,8 @@ by adding a `csslint` config value:
 csslint:
   'known-properties': false
 ```
+
+### LESS
 
 You can configure the LESS parser, such as for adding include paths,
 by adding a `less` config value:
