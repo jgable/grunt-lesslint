@@ -51,6 +51,19 @@ less:
   paths: ['includes']
 ```
 
+### Linting imports
+
+By default, this plugin does not include any lint errors from imported files
+in the output.
+
+You can enable this by adding an `imports` configuration option:
+
+```coffeescript
+lesslint:
+  src: ['src/**/*.less']
+  imports: ['imports/**/*.less']
+```
+
 ## Example output
 
 ```

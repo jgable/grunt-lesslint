@@ -64,13 +64,15 @@ getLessLineNumber = (css, less, file, line) ->
   else
     -1
 
-isFileError = (file, css, line) ->
-  {filePath} = findLessMapping(css, line)
-  filePath is path.resolve(process.cwd(), file)
-
 module.exports = (grunt) ->
+  isFileError = (file, css, line, importsToLint) ->
+    {filePath} = findLessMapping(css, line)
+    filePath is path.resolve(process.cwd(), file) or
+      grunt.file.isMatch(importsToLint, filePath)
+
   grunt.registerMultiTask 'lesslint', 'Validate LESS files with CSS Lint', ->
     options = @options()
+    importsToLint = options.imports ? []
     fileCount = 0
     errorCount = 0
 
@@ -87,7 +89,7 @@ module.exports = (grunt) ->
 
         lintCss grunt, css, options, (error, messages=[]) ->
           messages = messages.filter (message) ->
-            isFileError(file, css, message.line - 1)
+            isFileError(file, css, message.line - 1, importsToLint)
 
           if messages.length > 0
             grunt.log.writeln("#{file.yellow} (#{messages.length})")

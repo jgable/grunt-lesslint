@@ -45,21 +45,48 @@ describe 'LESS Lint task', ->
         taskOutput = output.join('')
         expect(taskOutput).toContain '1 file lint free'
 
-  it 'does not reports error from imports', ->
-    grunt.config.init
-      pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+  describe 'when the file has imports', ->
+    describe 'when the imported file is included in the `imports` configuration option', ->
+      it 'reports the errors from the imports', ->
+        grunt.config.init
+          pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
 
-      lesslint:
-        src: ['**/fixtures/imports.less']
+          lesslint:
+            src: ['**/fixtures/imports.less']
+            imports: ['**/fixtures/file.less']
 
-    grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
-    tasksDone = false
-    grunt.registerTask 'done', 'done',  -> tasksDone = true
-    output = []
-    spyOn(process.stdout, 'write').andCallFake (data='') ->
-      output.push(data.toString())
-    grunt.task.run(['lesslint', 'done']).start()
-    waitsFor -> tasksDone
-    runs ->
-      taskOutput = output.join('')
-      expect(taskOutput).toContain '1 file lint free'
+        grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+        tasksDone = false
+        grunt.registerTask 'done', 'done',  -> tasksDone = true
+        output = []
+        spyOn(process.stdout, 'write').andCallFake (data='') ->
+          output.push(data.toString())
+        grunt.task.run(['lesslint', 'done']).start()
+        waitsFor -> tasksDone
+        runs ->
+          taskOutput = output.join('')
+          expect(taskOutput).toContain 'padding: 0px;'
+          expect(taskOutput).toContain 'margin: 0em;'
+          expect(taskOutput).toContain 'border-width: 0pt;'
+          expect(taskOutput).toContain '#id {'
+          expect(taskOutput).toContain '4 lint errors in 1 file.'
+
+    describe 'when the imported file is not included in the `imports` configuration option', ->
+      it 'does not report error from imports', ->
+        grunt.config.init
+          pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+          lesslint:
+            src: ['**/fixtures/imports.less']
+
+        grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+        tasksDone = false
+        grunt.registerTask 'done', 'done',  -> tasksDone = true
+        output = []
+        spyOn(process.stdout, 'write').andCallFake (data='') ->
+          output.push(data.toString())
+        grunt.task.run(['lesslint', 'done']).start()
+        waitsFor -> tasksDone
+        runs ->
+          taskOutput = output.join('')
+          expect(taskOutput).toContain '1 file lint free'
