@@ -33,7 +33,7 @@ grunt.loadNpmTasks('grunt-lesslint')
 Then run `grunt lesslint` to lint all the `.less` files under `src/`.
 
 By default the plugin uses the `less` and `csslint` config settings to
-configure the LESS parser and the CSS Lint validatorg.
+configure the LESS parser and the CSS Lint validator.
 
 You can configure the CSS Lint validator, such as for disabling certain rules,
 by adding a `csslint` config value:
