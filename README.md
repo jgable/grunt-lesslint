@@ -68,6 +68,20 @@ lesslint:
   imports: ['imports/**/*.less']
 ```
 
+### Generating reports
+
+This plugin provides the same output formatter options as the CSS Lint plugin
+and can be configured similarly:
+
+```coffeescript
+lesslint:
+  options:
+    formatters: [
+      id: 'csslint-xml'
+      dest: 'report/lesslint.xml'
+    ]
+```
+
 ## Example output
 
 ```

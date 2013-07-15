@@ -39,7 +39,8 @@
     "grunt-cli": "~0.1.9",
     "grunt-shell": "~0.2.2",
     "grunt-coffeelint": "0.0.6",
-    "rimraf": "~2.1.4"
+    "rimraf": "~2.1.4",
+    "tmp": "0.0.20"
   },
   "dependencies": {
     "csslint": "~0.9.10",

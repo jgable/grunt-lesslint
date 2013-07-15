@@ -41,11 +41,11 @@ module.exports = (grunt) ->
       else
         delete rules[id]
 
-    results = CSSLint.verify(css, rules)
-    if results.messages?.length > 0
-      callback(null, results.messages)
+    result = CSSLint.verify(css, rules)
+    if result.messages?.length > 0
+      callback(null, result)
     else
-      callback(null, [])
+      callback()
 
   getLessLineNumber = (css, less, file, line) ->
     cssLines = css.split('\n')
@@ -70,11 +70,29 @@ module.exports = (grunt) ->
     filePath is path.resolve(process.cwd(), file) or
       grunt.file.isMatch(importsToLint, filePath)
 
+  writeToFormatters = (options, results) ->
+    formatters = options.formatters
+    return unless grunt.util._.isArray(formatters)
+
+    formatters.forEach ({id, dest}) ->
+      return unless id and dest
+
+      formatter = CSSLint.getFormatter(id)
+      return unless formatter?
+
+      formatterOutput = formatter.startFormat()
+      for filePath, result of results
+        formatterOutput += formatter.formatResults(result, filePath, {})
+      formatterOutput += formatter.endFormat()
+      grunt.file.write(dest, formatterOutput)
+
+
   grunt.registerMultiTask 'lesslint', 'Validate LESS files with CSS Lint', ->
     options = @options()
     importsToLint = options.imports ? []
     fileCount = 0
     errorCount = 0
+    results = {}
 
     queue = async.queue (file, callback) ->
       grunt.verbose.write("Linting '#{file}'")
@@ -87,11 +105,13 @@ module.exports = (grunt) ->
           grunt.log.writeln(error.message)
           return
 
-        lintCss css, options, (error, messages=[]) ->
+        lintCss css, options, (error, result={}) ->
+          messages = result.messages ? []
           messages = messages.filter (message) ->
             isFileError(file, css, message.line - 1, importsToLint)
 
           if messages.length > 0
+            results[file] = result
             grunt.log.writeln("#{file.yellow} (#{messages.length})")
 
             messages = grunt.util._.groupBy messages, ({message}) -> message
@@ -124,6 +144,8 @@ module.exports = (grunt) ->
 
     done = @async()
     queue.drain = ->
+      writeToFormatters(options, results)
+
       if errorCount is 0
         grunt.log.ok("#{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')} lint free.")
         done()

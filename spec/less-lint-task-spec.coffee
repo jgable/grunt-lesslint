@@ -1,5 +1,8 @@
+fs = require 'fs'
 path = require 'path'
+
 grunt = require 'grunt'
+tmp = require 'tmp'
 
 describe 'LESS Lint task', ->
   it 'reports errors based on LESS line information', ->
@@ -90,3 +93,35 @@ describe 'LESS Lint task', ->
         runs ->
           taskOutput = output.join('')
           expect(taskOutput).toContain '1 file lint free'
+
+  describe 'when a formatter is specified in the configuration options', ->
+    reportFile = null
+
+    beforeEach ->
+      tmp.file (error, tempFile) -> reportFile = tempFile
+      waitsFor -> reportFile?
+
+    it 'outputs the lint errors to that formatter', ->
+      expect(fs.statSync(reportFile).size).toBe 0
+
+      grunt.config.init
+        pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+        lesslint:
+          src: ['**/fixtures/file.less']
+          options:
+            formatters: [
+              id: 'csslint-xml'
+              dest: reportFile
+            ]
+
+      grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+      tasksDone = false
+      grunt.registerTask 'done', 'done',  -> tasksDone = true
+      output = []
+      spyOn(process.stdout, 'write').andCallFake (data='') ->
+        output.push(data.toString())
+      grunt.task.run(['lesslint', 'done']).start()
+      waitsFor -> tasksDone
+      runs ->
+        expect(fs.statSync(reportFile).size).toBeGreaterThan 0
