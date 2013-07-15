@@ -121,13 +121,15 @@ module.exports = (grunt) ->
               fullRuleMessage += "#{rule.desc} " if rule.desc and rule.desc isnt ruleMessage
               grunt.log.writeln(fullRuleMessage + "(#{rule.id})".grey)
 
-              for {line} in ruleMessages
+              for message in ruleMessages
+                line = message.line
                 line--
                 errorCount++
                 continue if line < 0
 
                 lessLineNumber = getLessLineNumber(css, less, file, line)
                 if lessLineNumber >= 0
+                  message.line = lessLineNumber
                   errorPrefix = "#{lessLineNumber + 1}:".yellow
                   grunt.log.error("#{errorPrefix} #{less.split('\n')[lessLineNumber].trim()}")
                 else

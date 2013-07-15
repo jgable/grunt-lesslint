@@ -3,6 +3,7 @@ path = require 'path'
 
 grunt = require 'grunt'
 tmp = require 'tmp'
+{parseString} = require 'xml2js'
 
 describe 'LESS Lint task', ->
   it 'reports errors based on LESS line information', ->
@@ -124,4 +125,13 @@ describe 'LESS Lint task', ->
       grunt.task.run(['lesslint', 'done']).start()
       waitsFor -> tasksDone
       runs ->
-        expect(fs.statSync(reportFile).size).toBeGreaterThan 0
+        reportXml = fs.readFileSync(reportFile, 'utf8')
+        expect(reportXml.length).toBeGreaterThan 0
+        report = null
+        parseString reportXml, (error, parsedReport) -> report = parsedReport
+        errors = report.csslint.file[0].issue
+        expect(errors.length).toBe 4
+        expect(errors[0].$.line).toBe '1'
+        expect(errors[1].$.line).toBe '4'
+        expect(errors[2].$.line).toBe '7'
+        expect(errors[3].$.line).toBe '10'
