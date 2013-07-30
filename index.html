@@ -68,7 +68,10 @@ and outputs the offending LESS line for any CSS Lint errors found.</p>
 <p>Then run <code>grunt lesslint</code> to lint all the <code>.less</code> files under <code>src/</code>.</p>
 
 <p>By default the plugin uses the <code>less</code> and <code>csslint</code> config settings to
-configure the LESS parser and the CSS Lint validatorg.</p>
+configure the LESS parser and the CSS Lint validator.</p>
+
+<h3>
+<a name="css-lint" class="anchor" href="#css-lint"><span class="octicon octicon-link"></span></a>CSS Lint</h3>
 
 <p>You can configure the CSS Lint validator, such as for disabling certain rules,
 by adding a <code>csslint</code> config value:</p>
@@ -77,11 +80,41 @@ by adding a <code>csslint</code> config value:</p>
   <span class="s">'known-properties'</span><span class="o">:</span> <span class="kc">false</span>
 </pre></div>
 
+<h3>
+<a name="less" class="anchor" href="#less"><span class="octicon octicon-link"></span></a>LESS</h3>
+
 <p>You can configure the LESS parser, such as for adding include paths,
 by adding a <code>less</code> config value:</p>
 
 <div class="highlight"><pre><span class="nv">less:</span>
   <span class="nv">paths: </span><span class="p">[</span><span class="s">'includes'</span><span class="p">]</span>
+</pre></div>
+
+<h3>
+<a name="linting-imports" class="anchor" href="#linting-imports"><span class="octicon octicon-link"></span></a>Linting imports</h3>
+
+<p>By default, this plugin does not include any lint errors from imported files
+in the output.</p>
+
+<p>You can enable this by adding an <code>imports</code> configuration option:</p>
+
+<div class="highlight"><pre><span class="nv">lesslint:</span>
+  <span class="nv">src: </span><span class="p">[</span><span class="s">'src/**/*.less'</span><span class="p">]</span>
+  <span class="nv">imports: </span><span class="p">[</span><span class="s">'imports/**/*.less'</span><span class="p">]</span>
+</pre></div>
+
+<h3>
+<a name="generating-reports" class="anchor" href="#generating-reports"><span class="octicon octicon-link"></span></a>Generating reports</h3>
+
+<p>This plugin provides the same output formatter options as the CSS Lint plugin
+and can be configured similarly:</p>
+
+<div class="highlight"><pre><span class="nv">lesslint:</span>
+  <span class="nv">options:</span>
+    <span class="nv">formatters: </span><span class="p">[</span>
+      <span class="nv">id: </span><span class="s">'csslint-xml'</span>
+      <span class="nv">dest: </span><span class="s">'report/lesslint.xml'</span>
+    <span class="p">]</span>
 </pre></div>
 
 <h2>
