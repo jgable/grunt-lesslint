@@ -135,3 +135,24 @@ describe 'LESS Lint task', ->
         expect(errors[1].$.line).toBe '4'
         expect(errors[2].$.line).toBe '7'
         expect(errors[3].$.line).toBe '10'
+
+  describe 'when the less file does not compile', ->
+    it 'reports the compile errors', ->
+      grunt.config.init
+        pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+        lesslint:
+          src: ['**/fixtures/invalid.less']
+
+      grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+      tasksDone = false
+      grunt.registerTask 'done', 'done',  -> tasksDone = true
+      output = []
+      spyOn(process.stdout, 'write').andCallFake (data='') ->
+        output.push(data.toString())
+      grunt.task.run(['lesslint', 'done']).start()
+      waitsFor -> tasksDone
+      runs ->
+        taskOutput = output.join('')
+        expect(taskOutput).toContain "'does-not-exist.less' wasn't found"
+        expect(taskOutput).toContain '1 lint error in 1 file'

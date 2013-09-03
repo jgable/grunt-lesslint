@@ -103,6 +103,7 @@ module.exports = (grunt) ->
           errorCount++
           grunt.log.writeln("Error parsing #{file.yellow}")
           grunt.log.writeln(error.message)
+          callback()
           return
 
         lintCss css, options, (error, result={}) ->
