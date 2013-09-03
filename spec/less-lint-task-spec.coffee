@@ -76,7 +76,7 @@ describe 'LESS Lint task', ->
           expect(taskOutput).toContain '4 lint errors in 1 file.'
 
     describe 'when the imported file is not included in the `imports` configuration option', ->
-      it 'does not report error from imports', ->
+      it 'does not report errors from imports', ->
         grunt.config.init
           pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
 
