@@ -137,7 +137,7 @@ describe 'LESS Lint task', ->
         expect(errors[3].$.line).toBe '10'
 
   describe 'when the less file does not compile', ->
-    it 'reports the compile errors', ->
+    it 'reports the compile errors for missing imports', ->
       grunt.config.init
         pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
 
@@ -155,4 +155,24 @@ describe 'LESS Lint task', ->
       runs ->
         taskOutput = output.join('')
         expect(taskOutput).toContain "'does-not-exist.less' wasn't found"
+        expect(taskOutput).toContain '1 lint error in 1 file'
+
+    it 'reports the compile errors for missing functions', ->
+      grunt.config.init
+        pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+        lesslint:
+          src: ['**/fixtures/missing-function.less']
+
+      grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+      tasksDone = false
+      grunt.registerTask 'done', 'done',  -> tasksDone = true
+      output = []
+      spyOn(process.stdout, 'write').andCallFake (data='') ->
+        output.push(data.toString())
+      grunt.task.run(['lesslint', 'done']).start()
+      waitsFor -> tasksDone
+      runs ->
+        taskOutput = output.join('')
+        expect(taskOutput).toContain '.notAFunction is undefined'
         expect(taskOutput).toContain '1 lint error in 1 file'

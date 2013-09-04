@@ -18,11 +18,14 @@ module.exports = (grunt) ->
 
     if less = grunt.file.read(file)
       parser = new Parser(lessOptions)
-      parser.parse less, (error, tree) ->
-        if error?
-          callback(error)
-        else
-          callback(null, less, tree.toCSS())
+      try
+        parser.parse less, (error, tree) ->
+          if error?
+            callback(error)
+          else
+            callback(null, less, tree.toCSS())
+      catch error
+        callback(error)
     else
       callback(null, '', '')
 
