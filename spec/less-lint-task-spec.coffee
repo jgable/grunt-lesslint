@@ -176,3 +176,50 @@ describe 'LESS Lint task', ->
         taskOutput = output.join('')
         expect(taskOutput).toContain '.notAFunction is undefined'
         expect(taskOutput).toContain '1 lint error in 1 file'
+
+  describe 'when csslint option csslintrc is set', ->
+    it 'reads css options from csslintrc file', ->
+      grunt.config.init
+        pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+        lesslint:
+          options:
+            csslint:
+              csslintrc: 'spec/fixtures/.csslintrc'
+          src: ['**/fixtures/csslintrc.less']
+
+      grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+      tasksDone = false
+      grunt.registerTask 'done', 'done',  -> tasksDone = true
+      output = []
+      spyOn(process.stdout, 'write').andCallFake (data='') ->
+        output.push(data.toString())
+      grunt.task.run(['lesslint', 'done']).start()
+      waitsFor -> tasksDone
+      runs ->
+        taskOutput = output.join('')
+        expect(taskOutput).toContain 'margin: 0 !important'
+        expect(taskOutput).toContain '1 lint error in 1 file'
+
+    it 'reads css options from csslintrc file and picks up other rules as well', ->
+      grunt.config.init
+        pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+        lesslint:
+          options:
+            csslint:
+              important: false
+              csslintrc: 'spec/fixtures/.csslintrc'
+          src: ['**/fixtures/csslintrc.less']
+
+      grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+      tasksDone = false
+      grunt.registerTask 'done', 'done',  -> tasksDone = true
+      output = []
+      spyOn(process.stdout, 'write').andCallFake (data='') ->
+        output.push(data.toString())
+      grunt.task.run(['lesslint', 'done']).start()
+      waitsFor -> tasksDone
+      runs ->
+        taskOutput = output.join('')
+        expect(taskOutput).toContain '1 file lint free'
