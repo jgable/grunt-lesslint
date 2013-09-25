@@ -39,7 +39,7 @@ module.exports = (grunt) ->
     CSSLint.getRules().forEach ({id}) -> rules[id] = 1
 
     cssLintOptions = options.csslint ? grunt.config.get('csslint.options')
-    if cssLintOptions && cssLintOptions.csslintrc
+    if cssLintOptions?.csslintrc
       externalOptions = grunt.file.readJSON cssLintOptions.csslintrc
       delete cssLintOptions.csslintrc
 
