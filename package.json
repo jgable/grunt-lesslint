@@ -47,7 +47,8 @@
     "csslint": "~0.9.10",
     "less": "~1.4.0",
     "underscore": "~1.4.4",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "grunt-lib-contrib": "0.6.1"
   },
   "peerDependencies": {
     "grunt": "~0.4.0"
