@@ -57,14 +57,17 @@ describe 'LESS Lint task', ->
 
           lesslint:
             src: ['**/fixtures/imports.less']
-            imports: ['**/fixtures/file.less']
+            options:
+              imports: ['**/fixtures/file.less']
 
         grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
         tasksDone = false
         grunt.registerTask 'done', 'done',  -> tasksDone = true
         output = []
+
         spyOn(process.stdout, 'write').andCallFake (data='') ->
-          output.push(data.toString())
+           output.push(data.toString())
+
         grunt.task.run(['lesslint', 'done']).start()
         waitsFor -> tasksDone
         runs ->
@@ -74,6 +77,35 @@ describe 'LESS Lint task', ->
           expect(taskOutput).toContain 'border-width: 0pt;'
           expect(taskOutput).toContain '#id {'
           expect(taskOutput).toContain '4 lint errors in 1 file.'
+          expect(taskOutput).not.toContain 'Failed to find map CSS'
+
+      it 'reports the errors from the imports even if they are not given by a globbing pattern', ->
+        grunt.config.init
+          pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+          lesslint:
+            src: ['**/fixtures/imports.less']
+            options:
+              imports: ['spec/fixtures/file.less']
+
+        grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+        tasksDone = false
+        grunt.registerTask 'done', 'done',  -> tasksDone = true
+        output = []
+
+        spyOn(process.stdout, 'write').andCallFake (data='') ->
+          output.push(data.toString())
+
+        grunt.task.run(['lesslint', 'done']).start()
+        waitsFor -> tasksDone
+        runs ->
+          taskOutput = output.join('')
+          expect(taskOutput).toContain 'padding: 0px;'
+          expect(taskOutput).toContain 'margin: 0em;'
+          expect(taskOutput).toContain 'border-width: 0pt;'
+          expect(taskOutput).toContain '#id {'
+          expect(taskOutput).toContain '4 lint errors in 1 file.'
+          expect(taskOutput).not.toContain 'Failed to find map CSS'
 
     describe 'when the imported file is not included in the `imports` configuration option', ->
       it 'does not report errors from imports', ->
