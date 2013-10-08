@@ -18,6 +18,7 @@ module.exports = (grunt) ->
           level: 'ignore'
       src: ['src/**/*.coffee']
       test: ['spec/*.coffee']
+      gruntfile: ['Gruntfile.coffee']
 
     shell:
       test:
@@ -27,6 +28,7 @@ module.exports = (grunt) ->
           stderr: true
           failOnError: true
 
+  grunt.loadTasks('tasks')
   grunt.loadNpmTasks('grunt-coffeelint')
   grunt.loadNpmTasks('grunt-contrib-coffee')
   grunt.loadNpmTasks('grunt-shell')

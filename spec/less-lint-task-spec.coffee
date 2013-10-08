@@ -66,7 +66,7 @@ describe 'LESS Lint task', ->
         output = []
 
         spyOn(process.stdout, 'write').andCallFake (data='') ->
-           output.push(data.toString())
+          output.push(data.toString())
 
         grunt.task.run(['lesslint', 'done']).start()
         waitsFor -> tasksDone
