@@ -12,6 +12,8 @@ defaultLessOptions =
   yuicompress: false
 
 module.exports = (grunt) ->
+  {stripPath} = require('grunt-lib-contrib').init grunt
+
   parseLess = (file, options, callback) ->
     configLessOptions = options.less ? grunt.config.get('less.options')
     lessOptions = grunt.util._.extend({filename: file}, configLessOptions, defaultLessOptions)
@@ -57,28 +59,34 @@ module.exports = (grunt) ->
     else
       callback()
 
-  getLessLineNumber = (css, less, file, line) ->
+  originalPositionFor = (css, less, file, line) ->
     cssLines = css.split('\n')
-    return -1 unless 0 <= line < cssLines.length
-
+    return lineNumber: -1 unless 0 <= line < cssLines.length
     {lineNumber, filePath} = findLessMapping(cssLines, line)
-    return -1 unless filePath is path.resolve(process.cwd(), file)
+
+    # Get imported source .less file.
+    less = grunt.file.read(filePath) if filePath isnt path.resolve(process.cwd(), file)
 
     lessLines = less.split('\n')
+
     if 0 <= lineNumber < lessLines.length
       if cssPropertyName = getPropertyName(cssLines[line])
         propertyNameLineNumber = findPropertyLineNumber(lessLines, lineNumber, cssPropertyName)
         lineNumber = propertyNameLineNumber if propertyNameLineNumber >= 0
 
     if 0 <= lineNumber < lessLines.length
-      lineNumber
+      lineNumber: lineNumber
+      filePath: filePath
+      less: less
     else
-      -1
+      lineNumber: -1
+      filePath: filePath
+      less: less
 
   isFileError = (file, css, line, importsToLint) ->
     {filePath} = findLessMapping(css, line)
     filePath is path.resolve(process.cwd(), file) or
-      grunt.file.isMatch(importsToLint, filePath)
+      (filePath? and grunt.file.isMatch(importsToLint, stripPath(filePath, process.cwd())))
 
   writeToFormatters = (options, results) ->
     formatters = options.formatters
@@ -138,11 +146,13 @@ module.exports = (grunt) ->
                 errorCount++
                 continue if line < 0
 
-                lessLineNumber = getLessLineNumber(css, less, file, line)
-                if lessLineNumber >= 0
-                  message.line = lessLineNumber
-                  errorPrefix = "#{lessLineNumber + 1}:".yellow
-                  grunt.log.error("#{errorPrefix} #{less.split('\n')[lessLineNumber].trim()}")
+                {lineNumber, filePath, less} = originalPositionFor(css, less, file, line)
+
+                if lineNumber >= 0
+                  message.line = lineNumber
+                  errorPrefix = "#{stripPath(filePath, process.cwd())} #{lineNumber + 1}:".yellow
+
+                  grunt.log.error("#{errorPrefix} #{less.split('\n')[lineNumber].trim()}")
                 else
                   cssLine = css.split('\n')[line]
                   if cssLine?

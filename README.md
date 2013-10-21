@@ -17,7 +17,7 @@ npm install grunt-lesslint
   * Run `npm install`
   * Run `grunt` to compile the CoffeeScript code
   * Run `grunt test` to run the specs
-  
+
 ## Configuring
 
 Add the following to your `Gruntfile.coffee`:
@@ -65,7 +65,8 @@ You can enable this by adding an `imports` configuration option:
 ```coffeescript
 lesslint:
   src: ['src/**/*.less']
-  imports: ['imports/**/*.less']
+  options:
+    imports: ['imports/**/*.less']
 ```
 
 ### Generating reports
