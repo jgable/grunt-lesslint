@@ -5,11 +5,11 @@ async = require 'async'
 path = require 'path'
 
 defaultLessOptions =
+  cleancss: false
   compress: false
   dumpLineNumbers: 'comments'
   optimization: null
   syncImport: true
-  yuicompress: false
 
 module.exports = (grunt) ->
   {stripPath} = require('grunt-lib-contrib').init grunt
