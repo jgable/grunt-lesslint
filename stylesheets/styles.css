@@ -63,7 +63,11 @@ code, pre {
 
 pre {
   padding:8px 15px;
-  background: #f8f8f8;
+  background-color: #f8f8f8;
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  -ms-border-radius:5px;
+  -o-border-radius:5px;
   border-radius:5px;
   border:1px solid #e5e5e5;
   overflow-x: auto;
@@ -105,14 +109,18 @@ header ul {
 
   padding:0;
 
-  background: #eee;
-  background: -moz-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#dddddd));
-  background: -webkit-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-  background: -o-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-  background: -ms-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-  background: linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+  background-color: #eee;
+  background-image: -moz-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#dddddd));
+  background-image: -webkit-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+  background-image: -o-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+  background-image: -ms-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+  background-image: linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
 
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  -ms-border-radius:5px;
+  -o-border-radius:5px;
   border-radius:5px;
   border:1px solid #d2d2d2;
   box-shadow:inset #fff 0 1px 0, inset rgba(0,0,0,0.03) 0 -1px 0;
@@ -169,7 +177,7 @@ small {
 
 hr {
   border:0;
-  background:#e5e5e5;
+  background-color:#e5e5e5;
   height:1px;
   margin:0 0 20px;
 }
