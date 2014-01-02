@@ -1,10 +1,7 @@
-@import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);
-
 body {
   padding:50px;
-  font:14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font:400 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
   color:#777;
-  font-weight:300;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -34,14 +31,12 @@ h3, h4, h5, h6 {
 
 a {
   color:#39c;
-  font-weight:400;
   text-decoration:none;
 }
 
 a small {
-  font-size:11px;
   color:#777;
-  margin-top:-0.6em;
+  margin-top:-0.2em;
   display:block;
 }
 
@@ -60,12 +55,16 @@ blockquote {
 code, pre {
   font-family:Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
   color:#333;
-  font-size:12px;
+  font-size:0.9em;
 }
 
 pre {
   padding:8px 15px;
-  background: #f8f8f8;  
+  background-color: #f8f8f8;
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  -ms-border-radius:5px;
+  -o-border-radius:5px;
   border-radius:5px;
   border:1px solid #e5e5e5;
   overflow-x: auto;
@@ -73,7 +72,6 @@ pre {
 
 table {
   width:100%;
-  border-collapse:collapse;
 }
 
 th, td {
@@ -102,19 +100,23 @@ header {
 }
 
 header ul {
-  list-style:none;
+  list-style-type:none;
   height:40px;
-  
+
   padding:0;
-  
-  background: #eee;
-  background: -moz-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#dddddd));
-  background: -webkit-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-  background: -o-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-  background: -ms-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-  background: linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-  
+
+  background-color: #eee;
+  background-image: -webkit-linear-gradient(top, #f8f8f8 0%, #ddd 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#ddd));
+  background-image: -moz-linear-gradient(top, #f8f8f8 0%, #ddd 100%);
+  background-image: -ms-linear-gradient(top, #f8f8f8 0%, #ddd 100%);
+  background-image: -o-linear-gradient(top, #f8f8f8 0%, #ddd 100%);
+  background-image: linear-gradient(top, #f8f8f8 0%, #ddd 100%);
+
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  -ms-border-radius:5px;
+  -o-border-radius:5px;
   border-radius:5px;
   border:1px solid #d2d2d2;
   box-shadow:inset #fff 0 1px 0, inset rgba(0,0,0,0.03) 0 -1px 0;
@@ -140,7 +142,6 @@ header ul a {
 
 strong {
   color:#222;
-  font-weight:700;
 }
 
 header ul li + li {
@@ -156,7 +157,6 @@ header ul li + li + li {
 header ul a strong {
   font-size:14px;
   display:block;
-  color:#222;
 }
 
 section {
@@ -165,13 +165,9 @@ section {
   padding-bottom:50px;
 }
 
-small {
-  font-size:11px;
-}
-
 hr {
   border:0;
-  background:#e5e5e5;
+  background-color:#e5e5e5;
   height:1px;
   margin:0 0 20px;
 }
@@ -184,33 +180,33 @@ footer {
 }
 
 @media print, screen and (max-width: 960px) {
-  
-  div.wrapper {
+
+  .wrapper {
     width:auto;
     margin:0;
   }
-  
+
   header, section, footer {
     float:none;
     position:static;
     width:auto;
   }
-  
+
   header {
     padding-right:320px;
   }
-  
+
   section {
     border:1px solid #e5e5e5;
     border-width:1px 0;
     padding:20px 0;
     margin:0 0 20px;
   }
-  
+
   header a small {
     display:inline;
   }
-  
+
   header ul {
     position:absolute;
     right:50px;
@@ -222,17 +218,13 @@ footer {
   body {
     word-wrap:break-word;
   }
-  
+
   header {
     padding:0;
   }
-  
+
   header ul, header p.view {
     position:static;
-  }
-  
-  pre, code {
-    word-wrap:normal;
   }
 }
 
@@ -240,7 +232,7 @@ footer {
   body {
     padding:15px;
   }
-  
+
   header ul {
     display:none;
   }
