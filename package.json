@@ -48,7 +48,8 @@
     "less": "~1.5.0",
     "underscore": "~1.5.2",
     "async": "~0.2.9",
-    "grunt-lib-contrib": "0.6.1"
+    "grunt-lib-contrib": "0.6.1",
+    "cache-swap": "0.0.5"
   },
   "peerDependencies": {
     "grunt": "~0.4.0"

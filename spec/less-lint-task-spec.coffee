@@ -1,9 +1,13 @@
 fs = require 'fs'
 path = require 'path'
+crypto = require 'crypto'
 
 grunt = require 'grunt'
 tmp = require 'tmp'
 {parseString} = require 'xml2js'
+{LintCache} = require '../tasks/lint-cache'
+
+_ = grunt.util._
 
 describe 'LESS Lint task', ->
   it 'reports errors based on LESS line information', ->
@@ -255,3 +259,48 @@ describe 'LESS Lint task', ->
       runs ->
         taskOutput = output.join('')
         expect(taskOutput).toContain '1 file lint free'
+
+  describe 'when cache option is set', ->
+    it 'caches previously linted files for faster performance', ->
+      grunt.config.init
+        pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+        lesslint:
+          options:
+            cache: true
+          src: ['**/fixtures/valid.less']
+
+      grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+      taskCount = 0
+      tasksDone = false
+      addCacheHash = null
+      grunt.registerTask 'done', 'done',  ->
+        taskCount++
+
+        if taskCount == 2
+          return tasksDone = true
+
+        grunt.task.run(['lesslint', 'done']).start()
+      output = []
+      spyOn(process.stdout, 'write').andCallFake (data='') ->
+        output.push(data.toString())
+      spyOn(LintCache.prototype, 'hasCached').andCallFake (hash, done) ->
+        # only return false the first time
+        done(taskCount == 1)
+      spyOn(LintCache.prototype, 'addCached').andCallFake (hash, done) ->
+        addCacheHash = hash
+        done()
+      grunt.task.run(['lesslint', 'done']).start()
+      waitsFor -> tasksDone
+      runs ->
+        taskOutput = output.join('')
+        expect(taskOutput).toContain '1 file lint free'
+        # should be called both times
+        expect(LintCache.prototype.hasCached.callCount).toBe(2)
+        # should only be called the first time
+        expect(LintCache.prototype.addCached.callCount).toBe(1)
+
+        less = grunt.file.read(path.join(__dirname, 'fixtures', 'valid.less'))
+        expectedHash = crypto.createHash('md5').update(less).digest('base64')
+
+        expect(addCacheHash).toEqual expectedHash
