@@ -22,36 +22,33 @@
     "url": "https://github.com/kevinsawicki/grunt-lesslint/issues"
   },
   "homepage": "http://kevinsawicki.github.io/grunt-lesslint",
-  "author": {
-    "name": "Kevin Sawicki",
-    "email": "kevinsawicki@gmail.com"
-  },
+  "author": "Kevin Sawicki <kevinsawicki@gmail.com>",
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/kevinsawicki/grunt-lesslint/raw/master/LICENSE.md"
+      "url": "https://raw.github.com/kevinsawicki/grunt-lesslint/master/LICENSE.md"
     }
   ],
-  "devDependencies": {
-    "jasmine-focused": "~0.15.0",
-    "grunt": "~0.4.1",
-    "grunt-contrib-coffee": "~0.7.0",
-    "grunt-cli": "~0.1.9",
-    "grunt-shell": "~0.2.2",
-    "grunt-coffeelint": "0.0.6",
-    "rimraf": "~2.1.4",
-    "tmp": "0.0.20",
-    "xml2js": "~0.2.8"
-  },
   "dependencies": {
-    "csslint": "~0.9.10",
-    "less": "~1.5.0",
-    "underscore": "~1.5.2",
-    "async": "~0.2.9",
-    "grunt-lib-contrib": "0.6.1",
-    "cache-swap": "0.0.5"
+    "async": "~0.2.10",
+    "cache-swap": "~0.0.5",
+    "csslint": "~0.10.0",
+    "grunt-lib-contrib": "~0.6.1",
+    "less": "~1.6.1",
+    "underscore": "~1.5.2"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-cli": "~0.1.13",
+    "grunt-coffeelint": "~0.0.8",
+    "grunt-contrib-coffee": "~0.8.2",
+    "grunt-shell": "~0.6.4",
+    "jasmine-focused": "~0.19.0",
+    "rimraf": "~2.2.6",
+    "tmp": "~0.0.23",
+    "xml2js": "~0.4.1"
   },
   "peerDependencies": {
-    "grunt": "~0.4.0"
+    "grunt": "~0.4.2"
   }
 }
