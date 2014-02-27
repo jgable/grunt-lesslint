@@ -43,7 +43,8 @@ by adding a `csslint` config value:
 
 ```coffeescript
 csslint:
-  'known-properties': false
+  options:
+    'known-properties': false
 ```
 
 ### LESS
