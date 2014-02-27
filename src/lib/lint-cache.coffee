@@ -5,7 +5,7 @@ path = require 'path'
 _ = grunt.util._
 
 # Grab the package info only once instead of on every instantiation
-packageInfo = grunt.file.readJSON(path.resolve(path.join(__dirname, '..', 'package.json')))
+packageInfo = grunt.file.readJSON(path.resolve(path.join(__dirname, '..', '..', 'package.json')))
 
 class LintCache extends CacheSwap
   @category = 'lesshashed'

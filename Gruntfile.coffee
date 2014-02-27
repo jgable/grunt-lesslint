@@ -6,7 +6,7 @@ module.exports = (grunt) ->
       glob_to_multiple:
         expand: true
         cwd: 'src'
-        src: ['*.coffee']
+        src: ['**/*.coffee']
         dest: 'tasks'
         ext: '.js'
 
@@ -34,5 +34,5 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks('grunt-shell')
   grunt.registerTask 'clean', -> require('rimraf').sync('tasks')
   grunt.registerTask('lint', ['coffeelint'])
-  grunt.registerTask('test', ['default', 'shell:test'])
+  grunt.registerTask('test', ['default', 'lesslint:clearCache', 'shell:test'])
   grunt.registerTask('default', ['lint', 'coffee'])
