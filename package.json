@@ -1,6 +1,6 @@
 {
   "name": "grunt-lesslint",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "Grunt task for validating LESS files with CSS Lint",
   "main": "./tasks/linter.js",
   "keywords": [
@@ -35,13 +35,13 @@
     "csslint": "~0.10.0",
     "grunt-lib-contrib": "~0.6.1",
     "less": "~1.6.1",
-    "underscore": "~1.5.2"
+    "underscore": "~1.6.0"
   },
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-cli": "~0.1.13",
     "grunt-coffeelint": "~0.0.8",
-    "grunt-contrib-coffee": "~0.8.2",
+    "grunt-contrib-coffee": "~0.10.1",
     "grunt-shell": "~0.6.4",
     "jasmine-focused": "~1.0.4",
     "rimraf": "~2.2.6",
