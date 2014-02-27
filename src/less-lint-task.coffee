@@ -124,15 +124,21 @@ module.exports = (grunt) ->
       # Bug out early if no less content
       return callback() unless less
 
-      processFile = ->
-        parseLess file, less, options, (error, less, css) ->
-          if error?
-            errorCount++
-            grunt.log.writeln("Error parsing #{file.yellow}")
-            grunt.log.writeln(error.message)
-            callback()
-            return
+      if options.cache
+        cache = new LintCache(options.cache)
 
+      # Parse the less always because imports could have changed
+      parseLess file, less, options, (error, less, css) ->
+        if error?
+          errorCount++
+          grunt.log.writeln("Error parsing #{file.yellow}")
+          grunt.log.writeln(error.message)
+          callback()
+          return
+
+        # Takes the css and (optional) hash and processes them with CSSLint,
+        # made into a function because we may need to make an async call to cache.hasCached
+        processCss = (css, hash) ->
           lintCss css, options, (error, result={}) ->
             messages = result.messages ? []
             messages = messages.filter (message) ->
@@ -178,19 +184,19 @@ module.exports = (grunt) ->
 
             callback()
 
-      if options.cache
-        cache = new LintCache(options.cache)
-        hash = crypto.createHash('md5').update(less).digest('base64')
+        if options.cache
+          # Cache based on generated css instead of just less content
+          hash = crypto.createHash('md5').update(css).digest('base64')
 
-        cache.hasCached hash, (isCached) ->
-          # Bug out early if we've already linted this file successfully before
-          if isCached
-            grunt.verbose.writeln "Skipping previously linted file: #{file.green}"
-            return callback()
+          cache.hasCached hash, (isCached) ->
+            # Bug out early if we've already linted this file successfully before
+            if isCached
+              grunt.verbose.writeln "Skipping previously linted file: #{file.green}"
+              return callback()
 
-          processFile()
-      else
-        processFile()
+            processCss css, hash
+        else
+          processCss css
 
     @filesSrc.forEach (file) -> queue.push(file)
 
