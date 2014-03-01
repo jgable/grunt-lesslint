@@ -16,7 +16,7 @@ module.exports = class LessParser
     opts = _.defaults(opts || {}, defaultLessOptions)
 
     # Set the options and create the parser
-    @opts = _.extend({ filename: fileName }, opts)
+    @opts = _.extend({ filename: fileName, sourceMaps: true }, opts)
     @parser = new Parser(@opts)
 
   parse: (less, callback) ->

@@ -3,6 +3,7 @@
 {findLessMapping, findPropertyLineNumber, getPropertyName} = require './lib/lint-utils'
 {LintCache} = require './lib/lint-cache'
 {LessFile, LessCachedFile} = require './lib/less-file'
+LintErrorOutput = require './lib/lint-error-output'
 async = require 'async'
 path = require 'path'
 crypto = require 'crypto'
@@ -19,35 +20,6 @@ defaultLessOptions =
 
 module.exports = (grunt) ->
 
-  originalPositionFor = (css, less, file, line) ->
-    cssLines = css.split('\n')
-    return lineNumber: -1 unless 0 <= line < cssLines.length
-    {lineNumber, filePath} = findLessMapping(cssLines, line)
-
-    # Get imported source .less file.
-    less = grunt.file.read(filePath) if filePath isnt path.resolve(process.cwd(), file)
-
-    lessLines = less.split('\n')
-
-    if 0 <= lineNumber < lessLines.length
-      if cssPropertyName = getPropertyName(cssLines[line])
-        propertyNameLineNumber = findPropertyLineNumber(lessLines, lineNumber, cssPropertyName)
-        lineNumber = propertyNameLineNumber if propertyNameLineNumber >= 0
-
-    if 0 <= lineNumber < lessLines.length
-      lineNumber: lineNumber
-      filePath: filePath
-      less: less
-    else
-      lineNumber: -1
-      filePath: filePath
-      less: less
-
-  isFileError = (file, css, line, importsToLint) ->
-    {filePath} = findLessMapping(css, line)
-    filePath is path.resolve(process.cwd(), file) or
-      (filePath? and grunt.file.isMatch(importsToLint, stripPath(filePath, process.cwd())))
-
   writeToFormatters = (options, results) ->
     formatters = options.formatters
     return unless _.isArray(formatters)
@@ -60,50 +32,16 @@ module.exports = (grunt) ->
 
       formatterOutput = formatter.startFormat()
       for filePath, result of results
+        # Update the source lines from source map info
+        for message in result.messages
+          if message.lessLine
+            # We are subtracting 1 for backward compatibility, but I'm skeptical we should be
+            message.line = message.lessLine.line - 1
+            message.col = message.lessLine.column - 1
+
         formatterOutput += formatter.formatResults(result, filePath, {})
       formatterOutput += formatter.endFormat()
       grunt.file.write(dest, formatterOutput)
-
-  # TODO: Refactor to a class somewhere
-  processLintErrors = (file, importsToLint, result, less, css) ->
-    messages = result.messages ? []
-    messages = messages.filter (message) ->
-      isFileError(file, css, message.line - 1, importsToLint)
-
-    fileErrors = 0
-
-    grunt.log.writeln("#{chalk.yellow(file)} (#{messages.length})")
-
-    messages = _.groupBy messages, ({message}) -> message
-    for ruleMessage, ruleMessages of messages
-      rule = ruleMessages[0].rule
-      fullRuleMessage = "#{ruleMessage} "
-      fullRuleMessage += "#{rule.desc} " if rule.desc and rule.desc isnt ruleMessage
-      grunt.log.writeln(fullRuleMessage + chalk.grey("(#{rule.id})"))
-
-      for message in ruleMessages
-        line = message.line
-        line--
-        fileErrors++
-        continue if line < 0
-
-        {lineNumber, filePath, less} = originalPositionFor(css, less, file, line)
-
-        if lineNumber >= 0
-          message.line = lineNumber
-          errorPrefix = chalk.yellow("#{stripPath(filePath, process.cwd())} #{lineNumber + 1}:")
-
-          grunt.log.error("#{errorPrefix} #{less.split('\n')[lineNumber].trim()}")
-        else
-          cssLine = css.split('\n')[line]
-          if cssLine?
-            errorPrefix = chalk.yellow("#{line + 1}:")
-            grunt.log.error("#{errorPrefix} #{cssLine.trim()}")
-
-          grunt.log.writeln(chalk.yellow("Failed to find map CSS line #{line + 1} to a LESS line."))
-
-    fileErrors
-
 
   grunt.registerMultiTask 'lesslint', 'Validate LESS files with CSS Lint', ->
     options = @options
@@ -112,7 +50,7 @@ module.exports = (grunt) ->
       # Default to csslint task options
       csslint: grunt.config.get('csslint.options')
       # Default to no imports
-      imports: []
+      imports: undefined
       # Default to no caching
       cache: false
 
@@ -129,17 +67,23 @@ module.exports = (grunt) ->
       else
         lessFile = new LessCachedFile(file, options, grunt)
 
-      lessFile.lint (err, lintResult, less, css) ->
+      lessFile.lint (err, result) ->
         if err?
           errorCount++
           grunt.log.writeln(err.message)
           return callback()
 
+        result ||= {}
+
+        lintResult = result.lint
+
         if lintResult
-          # Save for later
+          # Save for later use in formatters
           results[file] = lintResult
-          # Show error messages
-          fileLintErrors = processLintErrors(file, options.imports, lintResult, less, css)
+          # Show error messages and get error count back
+          errorOutput = new LintErrorOutput(result, grunt)
+          fileLintErrors = errorOutput.display(options.imports)
+          
           errorCount += fileLintErrors
 
         callback()
