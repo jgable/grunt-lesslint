@@ -3,6 +3,7 @@ crypto = require 'crypto'
 LessParser = require './less-parser'
 CssLinter = require './css-linter'
 {LintCache} = require './lint-cache'
+chalk = require 'chalk'
 
 # Base Class representing a file to be linted
 class LessFile
@@ -11,11 +12,11 @@ class LessFile
   lint: (callback) ->
     # Parse the LESS into CSS
     @getCss (err, css) =>
-      return callback(new Error("Error parsing #{@filePath.yellow}: #{err.message}")) if err
+      return callback(new Error("Error parsing #{chalk.yellow(@filePath)}: #{err.message}")) if err
 
       # Lint the css
       @lintCss css, (err, result) =>
-        return callback(new Error("Error linting #{@filePath.yellow}: #{err.message}")) if err
+        return callback(new Error("Error linting #{chalk.yellow(@filePath)}: #{err.message}")) if err
 
         callback null, result, @getContents(), css
 
