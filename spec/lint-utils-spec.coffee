@@ -1,6 +1,6 @@
 fs = require 'fs'
 path = require 'path'
-linter = require '../tasks/lint-utils'
+linter = require '../tasks/lib/lint-utils'
 
 describe 'lint-utils', ->
   describe '.findLessMapping()', ->

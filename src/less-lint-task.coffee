@@ -1,7 +1,8 @@
 {CSSLint} = require 'csslint'
 {Parser} = require 'less'
-{findLessMapping, findPropertyLineNumber, getPropertyName} = require './lint-utils'
-{LintCache} = require './lint-cache'
+{findLessMapping, findPropertyLineNumber, getPropertyName} = require './lib/lint-utils'
+{LintCache} = require './lib/lint-cache'
+{LessFile, LessCachedFile} = require './lib/less-file'
 async = require 'async'
 path = require 'path'
 crypto = require 'crypto'
@@ -16,50 +17,7 @@ defaultLessOptions =
 module.exports = (grunt) ->
   {stripPath} = require('grunt-lib-contrib').init grunt
 
-  parseLess = (file, less, options, callback) ->
-    configLessOptions = options.less ? grunt.config.get('less.options')
-    lessOptions = grunt.util._.extend({filename: file}, configLessOptions, defaultLessOptions)
-
-    if less
-      parser = new Parser(lessOptions)
-      try
-        parser.parse less, (error, tree) ->
-          if error?
-            callback(error)
-          else
-            callback(null, less, tree.toCSS())
-      catch error
-        callback(error)
-    else
-      callback(null, '', '')
-
-  lintCss = (css, options, callback) ->
-    unless css
-      callback(null, [])
-      return
-
-    rules = {}
-    externalOptions = {}
-    CSSLint.getRules().forEach ({id}) -> rules[id] = 1
-
-    cssLintOptions = options.csslint ? grunt.config.get('csslint.options')
-    if cssLintOptions?.csslintrc
-      externalOptions = grunt.file.readJSON cssLintOptions.csslintrc
-      delete cssLintOptions.csslintrc
-
-    grunt.util._.extend(cssLintOptions, externalOptions)
-
-    for id, enabled of cssLintOptions
-      if cssLintOptions[id]
-        rules[id] = cssLintOptions[id]
-      else
-        delete rules[id]
-
-    result = CSSLint.verify(css, rules)
-    if result.messages?.length > 0
-      callback(null, result)
-    else
-      callback()
+  _ = grunt.util._
 
   originalPositionFor = (css, less, file, line) ->
     cssLines = css.split('\n')
@@ -92,7 +50,7 @@ module.exports = (grunt) ->
 
   writeToFormatters = (options, results) ->
     formatters = options.formatters
-    return unless grunt.util._.isArray(formatters)
+    return unless _.isArray(formatters)
 
     formatters.forEach ({id, dest}) ->
       return unless id and dest
@@ -106,12 +64,58 @@ module.exports = (grunt) ->
       formatterOutput += formatter.endFormat()
       grunt.file.write(dest, formatterOutput)
 
+  # TODO: Refactor to a class somewhere
+  processLintErrors = (file, importsToLint, result, less, css) ->
+    messages = result.messages ? []
+    messages = messages.filter (message) ->
+      isFileError(file, css, message.line - 1, importsToLint)
+
+    fileErrors = 0
+
+    grunt.log.writeln("#{file.yellow} (#{messages.length})")
+
+    messages = _.groupBy messages, ({message}) -> message
+    for ruleMessage, ruleMessages of messages
+      rule = ruleMessages[0].rule
+      fullRuleMessage = "#{ruleMessage} "
+      fullRuleMessage += "#{rule.desc} " if rule.desc and rule.desc isnt ruleMessage
+      grunt.log.writeln(fullRuleMessage + "(#{rule.id})".grey)
+
+      for message in ruleMessages
+        line = message.line
+        line--
+        fileErrors++
+        continue if line < 0
+
+        {lineNumber, filePath, less} = originalPositionFor(css, less, file, line)
+
+        if lineNumber >= 0
+          message.line = lineNumber
+          errorPrefix = "#{stripPath(filePath, process.cwd())} #{lineNumber + 1}:".yellow
+
+          grunt.log.error("#{errorPrefix} #{less.split('\n')[lineNumber].trim()}")
+        else
+          cssLine = css.split('\n')[line]
+          if cssLine?
+            errorPrefix = "#{line + 1}:".yellow
+            grunt.log.error("#{errorPrefix} #{cssLine.trim()}")
+
+          grunt.log.writeln("Failed to find map CSS line #{line + 1} to a LESS line.".yellow)
+
+    fileErrors
+
 
   grunt.registerMultiTask 'lesslint', 'Validate LESS files with CSS Lint', ->
     options = @options
+      # Default to the less task options
+      less: grunt.config.get('less.options')
+      # Default to csslint task options
+      csslint: grunt.config.get('csslint.options')
+      # Default to no imports
+      imports: []
+      # Default to no caching
       cache: false
 
-    importsToLint = options.imports ? []
     fileCount = 0
     errorCount = 0
     results = {}
@@ -120,83 +124,25 @@ module.exports = (grunt) ->
       grunt.verbose.write("Linting '#{file}'")
       fileCount++
 
-      less = grunt.file.read(file)
-      # Bug out early if no less content
-      return callback() unless less
+      unless options.cache
+        lessFile = new LessFile(file, options, grunt)
+      else
+        lessFile = new LessCachedFile(file, options, grunt)
 
-      if options.cache
-        cache = new LintCache(options.cache)
-
-      # Parse the less always because imports could have changed
-      parseLess file, less, options, (error, less, css) ->
-        if error?
+      lessFile.lint (err, lintResult, less, css) ->
+        if err?
           errorCount++
-          grunt.log.writeln("Error parsing #{file.yellow}")
-          grunt.log.writeln(error.message)
-          callback()
-          return
+          grunt.log.writeln(err.message)
+          return callback()
 
-        # Takes the css and (optional) hash and processes them with CSSLint,
-        # made into a function because we may need to make an async call to cache.hasCached
-        processCss = (css, hash) ->
-          lintCss css, options, (error, result={}) ->
-            messages = result.messages ? []
-            messages = messages.filter (message) ->
-              isFileError(file, css, message.line - 1, importsToLint)
+        if lintResult
+          # Save for later
+          results[file] = lintResult
+          # Show error messages
+          fileLintErrors = processLintErrors(file, options.imports, lintResult, less, css)
+          errorCount += fileLintErrors
 
-            if messages.length > 0
-              results[file] = result
-              grunt.log.writeln("#{file.yellow} (#{messages.length})")
-
-              messages = grunt.util._.groupBy messages, ({message}) -> message
-              for ruleMessage, ruleMessages of messages
-                rule = ruleMessages[0].rule
-                fullRuleMessage = "#{ruleMessage} "
-                fullRuleMessage += "#{rule.desc} " if rule.desc and rule.desc isnt ruleMessage
-                grunt.log.writeln(fullRuleMessage + "(#{rule.id})".grey)
-
-                for message in ruleMessages
-                  line = message.line
-                  line--
-                  errorCount++
-                  continue if line < 0
-
-                  {lineNumber, filePath, less} = originalPositionFor(css, less, file, line)
-
-                  if lineNumber >= 0
-                    message.line = lineNumber
-                    errorPrefix = "#{stripPath(filePath, process.cwd())} #{lineNumber + 1}:".yellow
-
-                    grunt.log.error("#{errorPrefix} #{less.split('\n')[lineNumber].trim()}")
-                  else
-                    cssLine = css.split('\n')[line]
-                    if cssLine?
-                      errorPrefix = "#{line + 1}:".yellow
-                      grunt.log.error("#{errorPrefix} #{cssLine.trim()}")
-
-                    grunt.log.writeln("Failed to find map CSS line #{line + 1} to a LESS line.".yellow)
-            else if options.cache
-              # Add the originally hashed less file to the cached successes
-              return cache.addCached hash, (error) ->
-                if error?
-                  grunt.log.writeln "Error cacheing result: #{file.yellow}"
-                callback()
-
-            callback()
-
-        if options.cache
-          # Cache based on generated css instead of just less content
-          hash = crypto.createHash('md5').update(css).digest('base64')
-
-          cache.hasCached hash, (isCached) ->
-            # Bug out early if we've already linted this file successfully before
-            if isCached
-              grunt.verbose.writeln "Skipping previously linted file: #{file.green}"
-              return callback()
-
-            processCss css, hash
-        else
-          processCss css
+        callback()
 
     @filesSrc.forEach (file) -> queue.push(file)
 
@@ -211,3 +157,13 @@ module.exports = (grunt) ->
         grunt.log.writeln()
         grunt.log.error("#{errorCount} lint #{grunt.util.pluralize(errorCount, 'error/errors')} in #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')}.")
         done(false)
+
+  grunt.registerTask 'lesslint:clearCache', ->
+    done = @async()
+
+    cache = new LintCache()
+
+    cache.clear (err) ->
+      grunt.log.error(err.message) if err
+
+      done()

@@ -5,7 +5,7 @@ crypto = require 'crypto'
 grunt = require 'grunt'
 tmp = require 'tmp'
 {parseString} = require 'xml2js'
-{LintCache} = require '../tasks/lint-cache'
+{LintCache} = require '../tasks/lib/lint-cache'
 
 _ = grunt.util._
 
@@ -273,7 +273,19 @@ describe 'LESS Lint task', ->
       grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
       taskCount = 0
       tasksDone = false
+
       addCacheHash = null
+      cacheHits = 0
+      addCacheHit = (filePath, cachePath) ->
+        cacheHits += 1
+      grunt.event.on 'lesslint.cache.hit', addCacheHit
+
+      cacheAdds = 0
+      addCacheAdd = (filePath, cacheHash) ->
+        cacheAdds += 1
+        addCacheHash = cacheHash
+      grunt.event.on 'lesslint.cache.add', addCacheAdd
+
       grunt.registerTask 'done', 'done',  ->
         taskCount++
 
@@ -284,22 +296,20 @@ describe 'LESS Lint task', ->
       output = []
       spyOn(process.stdout, 'write').andCallFake (data='') ->
         output.push(data.toString())
-      spyOn(LintCache.prototype, 'hasCached').andCallFake (hash, done) ->
-        # only return false the first time
-        done(taskCount == 1)
-      spyOn(LintCache.prototype, 'addCached').andCallFake (hash, done) ->
-        addCacheHash = hash
-        done()
+
       grunt.task.run(['lesslint', 'done']).start()
       waitsFor -> tasksDone
       runs ->
+        # Remove the event listeners
+        grunt.event.off 'lesslint.cache.hit', addCacheHit
+        grunt.event.off 'lesslint.cache.add', addCacheAdd
+
         taskOutput = output.join('')
         expect(taskOutput).toContain '1 file lint free'
         # should be called both times
-        expect(LintCache.prototype.hasCached.callCount).toBe(2)
+        expect(cacheHits).toBe(1)
         # should only be called the first time
-        expect(LintCache.prototype.addCached.callCount).toBe(1)
+        expect(cacheAdds).toBe(1)
 
-        less = grunt.file.read(path.join(__dirname, 'fixtures', 'valid.less'))
         expect(addCacheHash).toNotEqual null
         expect(addCacheHash).toNotEqual ''
