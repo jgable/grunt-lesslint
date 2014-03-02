@@ -1,6 +1,6 @@
 path = require 'path'
 grunt = require 'grunt'
-{LessFile, LessCachedFile} = require '../tasks/lib/less-file'
+{LessFile, LessImportFile, LessCachedFile} = require '../tasks/lib/less-file'
 
 describe 'less-file', ->
   describe 'LessFile', ->
@@ -29,6 +29,28 @@ describe 'less-file', ->
         expect(css.length).toBeGreaterThan 0
 
         done()
+
+  describe 'LessImportFile', ->
+    filePath = path.join(__dirname, 'fixtures', 'valid.less')
+    file = null
+
+    beforeEach ->
+      file = new LessImportFile(filePath, {}, grunt)
+
+    it 'does not read from disk if already loaded before', ->
+
+      spyOn(grunt.file, 'read').andCallFake (filePath) -> 'some fake file content'
+
+      hash = file.getDigest()
+
+      expect(grunt.file.read).toHaveBeenCalled()
+
+      otherFile = new LessImportFile(filePath, {}, grunt)
+      otherHash = otherFile.getDigest()
+
+      # There is no toHaveBeenCalled 1, so we check the calls length here
+      expect(grunt.file.read.calls.length).toBe 1
+      expect(hash).toBe otherHash
 
   describe 'LessCachedFile', ->
     filePath = path.join(__dirname, 'fixtures', 'valid.less')

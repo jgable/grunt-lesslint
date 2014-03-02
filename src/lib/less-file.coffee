@@ -32,7 +32,11 @@ class LessFile
     @contents = @grunt.file.read @filePath
 
   getDigest: ->
-    crypto.createHash('sha256').update(@getContents()).digest('base64')
+    return @digest if @digest
+
+    @digest = crypto.createHash('sha256').update(@getContents()).digest('base64')
+
+    @digest
 
   getCss: (callback) ->
     @getTree (err, tree) ->
@@ -50,6 +54,30 @@ class LessFile
     parser = new LessParser(@filePath, @options)
 
     parser.parse contents, callback
+
+# An in-memory hold of import contents and hashes
+sharedImportsContents = {}
+
+# Extended LessFile that keeps an in memory lookup of contents and hashes
+# to speed of subsequent lookups.
+class LessImportFile extends LessFile
+  getContents: ->
+    if sharedImportsContents[@filePath]?.contents
+      return sharedImportsContents[@filePath].contents
+
+    contents = super()
+
+    sharedImportsContents[@filePath] ||= { }
+    sharedImportsContents[@filePath].contents = contents
+
+  getDigest: ->
+    if sharedImportsContents[@filePath]?.digest
+      return sharedImportsContents[@filePath].digest
+
+    digest = super()
+
+    sharedImportsContents[@filePath] ||= { }
+    sharedImportsContents[@filePath].digest = digest
 
 # Extended LessFile with some logic for caching
 class LessCachedFile extends LessFile
@@ -94,6 +122,6 @@ class LessCachedFile extends LessFile
       .digest('base64')
 
   getImportsContents: ->
-    (new LessFile(importFilePath, {}, @grunt).getDigest() for importFilePath in @grunt.file.expand(@options.imports))
+    (new LessImportFile(importFilePath, {}, @grunt).getDigest() for importFilePath in @grunt.file.expand(@options.imports))
 
-module.exports = { LessFile, LessCachedFile }
+module.exports = { LessFile, LessImportFile, LessCachedFile }
