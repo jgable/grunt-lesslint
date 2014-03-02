@@ -11,14 +11,24 @@ class LessFile
 
   lint: (callback) ->
     # Parse the LESS into CSS
-    @getCss (err, css) =>
+    @getCss (err, css, sourceMap) =>
       return callback(new Error("Error parsing #{chalk.yellow(@filePath)}: #{err.message}")) if err
 
       # Lint the css
-      @lintCss css, (err, result) =>
+      @lintCss css, (err, lintResult) =>
         return callback(new Error("Error linting #{chalk.yellow(@filePath)}: #{err.message}")) if err
 
-        callback null, result, @getContents(), css
+        result =
+          file: @filePath
+          less: @getContents()
+          css: css
+          sourceMap: sourceMap
+
+        # Only set lint if it's not empty
+        if lintResult?.messages?.length > 0
+          result.lint = lintResult
+
+        callback null, result
 
   # Broken out for extension/stubbing
   lintCss: (css, callback) ->
@@ -43,7 +53,13 @@ class LessFile
     @getTree (err, tree) ->
       return callback(err) if err
 
-      callback null, tree.toCSS()
+      sourceMap = ''
+      css = tree.toCSS({
+        sourceMap: true
+        writeSourceMap: (output) -> sourceMap = output
+      })
+
+      callback null, css, sourceMap
 
   # Just in case someone needs just the tree for something later
   getTree: (callback) ->
@@ -92,6 +108,7 @@ class LessCachedFile extends LessFile
 
     @cache.hasCached hash, (isCached, cachedPath) =>
       if isCached
+        # Trigger an event; mostly for unit test listening
         @grunt.event.emit 'lesslint.cache.hit', @filePath, cachedPath, hash
         return callback()
 
@@ -100,7 +117,7 @@ class LessCachedFile extends LessFile
         return callback(err) if err
 
         # If there were errors found, pass them back and don't cache
-        return callback(null, result, less, css) if result?
+        return callback(null, result, less, css) if result.lint?
 
         # Otherwise, add to cache
         @cache.addCached hash, (err, cachedAddPath) =>

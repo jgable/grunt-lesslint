@@ -27,7 +27,7 @@ module.exports = (grunt) ->
           stdout: true
           stderr: true
           failOnError: true
-
+    
   grunt.loadTasks('tasks')
   grunt.loadNpmTasks('grunt-coffeelint')
   grunt.loadNpmTasks('grunt-contrib-coffee')

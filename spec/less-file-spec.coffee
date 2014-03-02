@@ -20,13 +20,13 @@ describe 'less-file', ->
       expect(hash.length).toBeGreaterThan 0
 
     it 'can lint a file', (done) ->
-      file.lint (err, result, less, css) ->
+      file.lint (err, result) ->
         expect(err).toBe null
-        expect(result).toBe undefined
-        expect(less).toNotBe undefined
-        expect(less.length).toBeGreaterThan 0
-        expect(css).toNotBe undefined
-        expect(css.length).toBeGreaterThan 0
+        expect(result.lint).toBe undefined
+        expect(result.less).toNotBe undefined
+        expect(result.less.length).toBeGreaterThan 0
+        expect(result.css).toNotBe undefined
+        expect(result.css.length).toBeGreaterThan 0
 
         done()
 
@@ -75,14 +75,14 @@ describe 'less-file', ->
       spyOn(file.cache, 'hasCached').andCallFake (hash, cb) -> cb(false)
       spyOn(file.cache, 'addCached').andCallFake (hash, cb) -> cb(null)
 
-      file.lint (err, result, less, css) ->
+      file.lint (err, result) ->
         expect(file.getCss).toHaveBeenCalled()
         expect(err).toBe null
-        expect(result).toBe undefined
-        expect(less).toNotBe undefined
-        expect(less.length).toBeGreaterThan 0
-        expect(css).toNotBe undefined
-        expect(css.length).toBeGreaterThan 0
+        expect(result.lint).toBe undefined
+        expect(result.less).toNotBe undefined
+        expect(result.less.length).toBeGreaterThan 0
+        expect(result.css).toNotBe undefined
+        expect(result.css.length).toBeGreaterThan 0
 
         done()
 
@@ -93,7 +93,7 @@ describe 'less-file', ->
       spyOn(file.cache, 'hasCached').andCallFake (hash, cb) -> cb(true)
       spyOn(file.cache, 'addCached').andCallFake (hash, cb) -> cb(null)
 
-      file.lint (err, result, less, css) ->
+      file.lint (err, result) ->
         expect(file.getCss).not.toHaveBeenCalled()
 
         done()
@@ -116,11 +116,11 @@ describe 'less-file', ->
         contentsCalls += 1
         ["body { margin: #{contentsCalls}px; }"]
 
-      file.lint (err, result, less, css) ->
+      file.lint (err, result) ->
         expect(file.getCss).toHaveBeenCalled()
         expect(contentsCalls).toBe 1
         expect(err).toBe null
-        expect(result).toBe undefined
+        expect(result.lint).toBe undefined
 
         otherFile = new LessCachedFile(filePath, {}, grunt)
         otherFile.options.imports = ['spec/fixtures/file.less']
@@ -137,7 +137,7 @@ describe 'less-file', ->
           contentsCalls += 1
           ["body { margin: #{contentsCalls}px; }"]
 
-        otherFile.lint (err, otherResult, less, css) ->
+        otherFile.lint (err, otherResult) ->
           expect(otherFile.getCss).toHaveBeenCalled()
           expect(contentsCalls).toBe 2
           expect(otherHashKey).not.toBe hashKey
