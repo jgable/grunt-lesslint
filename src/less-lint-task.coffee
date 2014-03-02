@@ -6,6 +6,9 @@
 async = require 'async'
 path = require 'path'
 crypto = require 'crypto'
+stripPath = require 'strip-path'
+_ = require 'underscore'
+chalk = require 'chalk'
 
 defaultLessOptions =
   cleancss: false
@@ -15,9 +18,6 @@ defaultLessOptions =
   syncImport: true
 
 module.exports = (grunt) ->
-  {stripPath} = require('grunt-lib-contrib').init grunt
-
-  _ = grunt.util._
 
   originalPositionFor = (css, less, file, line) ->
     cssLines = css.split('\n')
@@ -72,14 +72,14 @@ module.exports = (grunt) ->
 
     fileErrors = 0
 
-    grunt.log.writeln("#{file.yellow} (#{messages.length})")
+    grunt.log.writeln("#{chalk.yellow(file)} (#{messages.length})")
 
     messages = _.groupBy messages, ({message}) -> message
     for ruleMessage, ruleMessages of messages
       rule = ruleMessages[0].rule
       fullRuleMessage = "#{ruleMessage} "
       fullRuleMessage += "#{rule.desc} " if rule.desc and rule.desc isnt ruleMessage
-      grunt.log.writeln(fullRuleMessage + "(#{rule.id})".grey)
+      grunt.log.writeln(fullRuleMessage + chalk.grey("(#{rule.id})"))
 
       for message in ruleMessages
         line = message.line
@@ -91,16 +91,16 @@ module.exports = (grunt) ->
 
         if lineNumber >= 0
           message.line = lineNumber
-          errorPrefix = "#{stripPath(filePath, process.cwd())} #{lineNumber + 1}:".yellow
+          errorPrefix = chalk.yellow("#{stripPath(filePath, process.cwd())} #{lineNumber + 1}:")
 
           grunt.log.error("#{errorPrefix} #{less.split('\n')[lineNumber].trim()}")
         else
           cssLine = css.split('\n')[line]
           if cssLine?
-            errorPrefix = "#{line + 1}:".yellow
+            errorPrefix = chalk.yellow("#{line + 1}:")
             grunt.log.error("#{errorPrefix} #{cssLine.trim()}")
 
-          grunt.log.writeln("Failed to find map CSS line #{line + 1} to a LESS line.".yellow)
+          grunt.log.writeln(chalk.yellow("Failed to find map CSS line #{line + 1} to a LESS line."))
 
     fileErrors
 
