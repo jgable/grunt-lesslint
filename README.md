@@ -42,9 +42,12 @@ You can configure the CSS Lint validator, such as for disabling certain rules,
 by adding a `csslint` config value:
 
 ```coffeescript
-csslint:
-  options:
-    'known-properties': false
+lesslint:
+  all:
+    options: 
+      csslint:
+        'known-properties': false
+    src: ['less/*.less']
 ```
 
 ### LESS
