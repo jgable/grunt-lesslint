@@ -39,25 +39,27 @@ configure the LESS parser and the CSS Lint validator.
 ### CSS Lint
 
 You can configure the CSS Lint validator, such as for disabling certain rules,
-by adding a `csslint` config value:
+by adding a `csslint` option value:
 
 ```coffeescript
 lesslint:
-  all:
-    options: 
-      csslint:
-        'known-properties': false
-    src: ['less/*.less']
+  src: ['less/*.less']
+  options: 
+    csslint:
+      'known-properties': false
 ```
 
 ### LESS
 
 You can configure the LESS parser, such as for adding include paths,
-by adding a `less` config value:
+by adding a `less` option value:
 
 ```coffeescript
-less:
-  paths: ['includes']
+lesslint:
+  src: ['less/*.less']
+  options:
+    less:
+      paths: ['includes']
 ```
 
 ### Linting imports
