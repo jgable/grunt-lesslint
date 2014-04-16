@@ -1,4 +1,6 @@
 
+path = require 'path'
+
 {SourceMapConsumer} = require 'source-map'
 _ = require 'underscore'
 chalk = require 'chalk'
@@ -16,7 +18,7 @@ class LintErrorOutput
     # Shorthand references to result values
     messages = @result.lint.messages
     less = @result.less
-    file = @result.file
+    file = path.resolve(@result.file)
 
     fileContents = {}
     fileLines = {}
@@ -30,7 +32,7 @@ class LintErrorOutput
 
       isThisFile = source == file
 
-      return isThisFile or @grunt.file.isMatch importsToLint, source
+      return isThisFile or @grunt.file.isMatch(importsToLint, stripPath(source, process.cwd()))
 
     # Bug out if only import errors we don't care about
     return 0 if messages.length < 1
