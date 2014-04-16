@@ -1,4 +1,6 @@
 
+path = require 'path'
+
 _ = require 'underscore'
 {Parser} = require 'less'
 
@@ -16,7 +18,11 @@ module.exports = class LessParser
     opts = _.defaults(opts || {}, defaultLessOptions)
 
     # Set the options and create the parser
-    @opts = _.extend({ filename: fileName, sourceMaps: true }, opts)
+    @opts = _.extend({
+      filename: path.resolve(fileName),
+      paths: [path.dirname(path.resolve(fileName))]
+      sourceMaps: true
+    }, opts)
     @parser = new Parser(@opts)
 
   parse: (less, callback) ->
