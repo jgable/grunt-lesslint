@@ -1,5 +1,5 @@
 # LESS Lint Grunt plugin
-[![Build Status](https://travis-ci.org/kevinsawicki/grunt-lesslint.png)](https://travis-ci.org/kevinsawicki/grunt-lesslint) [![Dependency Status](https://david-dm.org/kevinsawicki/grunt-lesslint.png?theme=shields.io)](https://david-dm.org/kevinsawicki/grunt-lesslint) [![devDependency Status](https://david-dm.org/kevinsawicki/grunt-lesslint/dev-status.png?theme=shields.io)](https://david-dm.org/kevinsawicki/grunt-lesslint#info=devDependencies)
+[![Build Status](https://travis-ci.org/jgable/grunt-lesslint.png)](https://travis-ci.org/jgable/grunt-lesslint) [![Dependency Status](https://david-dm.org/jgable/grunt-lesslint.png?theme=shields.io)](https://david-dm.org/jgable/grunt-lesslint) [![devDependency Status](https://david-dm.org/jgable/grunt-lesslint/dev-status.png?theme=shields.io)](https://david-dm.org/jgable/grunt-lesslint#info=devDependencies)
 
 Lint your [LESS](http://lesscss.org/) files using
 [CSS Lint](http://csslint.net/) from [Grunt](http://gruntjs.com/).
