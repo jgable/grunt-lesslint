@@ -8,7 +8,7 @@ async = require 'async'
 path = require 'path'
 crypto = require 'crypto'
 stripPath = require 'strip-path'
-_ = require 'underscore'
+_ = require 'lodash'
 chalk = require 'chalk'
 
 defaultLessOptions =

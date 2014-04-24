@@ -2,7 +2,7 @@
 path = require 'path'
 
 {SourceMapConsumer} = require 'source-map'
-_ = require 'underscore'
+_ = require 'lodash'
 chalk = require 'chalk'
 stripPath = require 'strip-path'
 
@@ -25,7 +25,9 @@ class LintErrorOutput
 
     # Filter out imports we didn't pass as options.import
     messages = messages.filter (message) =>
-      # Grab the original contents
+      # Account for 0 line and rollup errors (Too many selectors rules, global rules)
+      return true if message.line == 0 or message.rollup
+
       {source} = sourceMap.originalPositionFor
         line: message.line,
         column: message.col
@@ -38,23 +40,27 @@ class LintErrorOutput
     return 0 if messages.length < 1
 
     # Group the errors by message
-    messageGroups = _.groupBy messages, ({message}) -> message
+    messageGroups = _.groupBy messages, ({message, rule}) ->
+      fullMsg = "#{message}"
+      fullMsg += " #{rule.desc}" if rule.desc and rule.desc isnt message
+      fullMsg
 
     # Output how many rules broken
     @grunt.log.writeln("#{chalk.yellow(file)} (#{messages.length})")
 
     # For each rule message and messages
-    for ruleMessage, ruleMessages of messageGroups
+    for fullRuleMessage, ruleMessages of messageGroups
       # Parse the rule and description
       rule = ruleMessages[0].rule
-      fullRuleMessage = "#{ruleMessage} "
-      fullRuleMessage += "#{rule.desc} " if rule.desc and rule.desc isnt ruleMessage
 
       # Output the rule broken
-      @grunt.log.writeln(fullRuleMessage + chalk.grey("(#{rule.id})"))
+      @grunt.log.writeln(fullRuleMessage + chalk.grey(" (#{rule.id})"))
 
       for message in ruleMessages
         errorCount += 1
+
+        # Account for global errors and rollup errors, don't show source line
+        continue if message.line == 0 or message.rollup
 
         # Grab the original contents
         {line, column, source} = sourceMap.originalPositionFor

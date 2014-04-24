@@ -7,7 +7,7 @@ tmp = require 'tmp'
 {parseString} = require 'xml2js'
 {LintCache} = require '../tasks/lib/lint-cache'
 
-_ = grunt.util._
+_ = require 'lodash'
 
 describe 'LESS Lint task', ->
   it 'reports errors based on LESS line information', ->

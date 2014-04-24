@@ -1,6 +1,6 @@
 
 {CSSLint} = require 'csslint'
-_ = require 'underscore'
+_ = require 'lodash'
 
 module.exports = class CssLinter
   constructor: (@options, @grunt) ->
