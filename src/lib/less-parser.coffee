@@ -1,7 +1,7 @@
 
 path = require 'path'
 
-_ = require 'underscore'
+_ = require 'lodash'
 {Parser} = require 'less'
 
 defaultLessOptions =

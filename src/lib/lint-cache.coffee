@@ -2,7 +2,7 @@ grunt = require 'grunt'
 CacheSwap = require 'cache-swap'
 path = require 'path'
 
-_ = grunt.util._
+_ = require 'lodash'
 
 # Grab the package info only once instead of on every instantiation
 packageInfo = grunt.file.readJSON(path.resolve(path.join(__dirname, '..', '..', 'package.json')))
