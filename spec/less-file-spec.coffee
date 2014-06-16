@@ -107,9 +107,9 @@ describe 'less-file', ->
       spyOn(file.cache, 'hasCached').andCallFake (hash, cb) ->
         hashKey = hash
         cb false
-      
+
       spyOn(file.cache, 'addCached').andCallFake (hash, cb) -> cb(null)
-      
+
       # Stub the getContents so we can change it on subsequent runs through
       contentsCalls = 0
       spyOn(file, 'getImportsContents').andCallFake ->
@@ -126,12 +126,12 @@ describe 'less-file', ->
         otherFile.options.imports = ['spec/fixtures/file.less']
 
         spyOn(otherFile, 'getCss').andCallThrough()
-        
+
         otherHashKey = null
         spyOn(otherFile.cache, 'hasCached').andCallFake (hash, cb) ->
           otherHashKey = hash
           cb false
-        
+
         spyOn(otherFile.cache, 'addCached').andCallFake (hash, cb) -> cb(null)
         spyOn(otherFile, 'getImportsContents').andCallFake ->
           contentsCalls += 1
@@ -141,5 +141,23 @@ describe 'less-file', ->
           expect(otherFile.getCss).toHaveBeenCalled()
           expect(contentsCalls).toBe 2
           expect(otherHashKey).not.toBe hashKey
-          
+
           done()
+
+  describe 'EmptyFile', ->
+    filePath = path.join(__dirname, 'fixtures', 'really-empty.less')
+    file = null
+
+    beforeEach ->
+      file = new LessFile(filePath, {}, grunt)
+
+    it 'can lint a file', (done) ->
+      file.lint (err, result) ->
+        expect(err).toBe null
+        expect(result.lint).toBe undefined
+        expect(result.less).toNotBe undefined
+        expect(result.less.length).toBe 0
+        expect(result.css).toNotBe undefined
+        expect(result.css.length).toBe 0
+
+        done()

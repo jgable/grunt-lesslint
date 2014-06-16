@@ -53,11 +53,11 @@ class LessFile
     @getTree (err, tree) ->
       return callback(err) if err
 
-      sourceMap = ''
+      css = sourceMap = ''
       css = tree.toCSS({
         sourceMap: true
         writeSourceMap: (output) -> sourceMap = output
-      })
+      }) if tree
 
       callback null, css, sourceMap
 
