@@ -42,7 +42,10 @@ describe 'LESS Lint task', ->
         pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
 
         lesslint:
-          src: ['**/fixtures/empty.less']
+          src: [
+            '**/fixtures/empty.less',
+            '**/fixtures/really-empty.less'
+          ]
 
       grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
       tasksDone = false
@@ -54,7 +57,7 @@ describe 'LESS Lint task', ->
       waitsFor -> tasksDone
       runs ->
         taskOutput = output.join('')
-        expect(taskOutput).toContain '1 file lint free'
+        expect(taskOutput).toContain '2 files lint free'
 
   describe 'when the file has imports', ->
     describe 'when the imported file is included in the `imports` configuration option', ->
