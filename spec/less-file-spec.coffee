@@ -30,6 +30,19 @@ describe 'less-file', ->
 
         done()
 
+    it 'can handle an empty file', (done) ->
+      filePath = path.join(__dirname, 'fixtures', 'really-empty.less')
+      file = new LessFile(filePath, {}, grunt)
+      file.lint (err, result) ->
+        expect(err).toBe null
+        expect(result.lint).toBe undefined
+        expect(result.less).toNotBe undefined
+        expect(result.less.length).toBe 0
+        expect(result.css).toNotBe undefined
+        expect(result.css.length).toBe 0
+
+        done()
+
   describe 'LessImportFile', ->
     filePath = path.join(__dirname, 'fixtures', 'valid.less')
     file = null
@@ -143,21 +156,3 @@ describe 'less-file', ->
           expect(otherHashKey).not.toBe hashKey
 
           done()
-
-  describe 'EmptyFile', ->
-    filePath = path.join(__dirname, 'fixtures', 'really-empty.less')
-    file = null
-
-    beforeEach ->
-      file = new LessFile(filePath, {}, grunt)
-
-    it 'can lint a file', (done) ->
-      file.lint (err, result) ->
-        expect(err).toBe null
-        expect(result.lint).toBe undefined
-        expect(result.less).toNotBe undefined
-        expect(result.less.length).toBe 0
-        expect(result.css).toNotBe undefined
-        expect(result.css.length).toBe 0
-
-        done()

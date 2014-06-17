@@ -54,10 +54,11 @@ class LessFile
       return callback(err) if err
 
       css = sourceMap = ''
-      css = tree.toCSS({
-        sourceMap: true
-        writeSourceMap: (output) -> sourceMap = output
-      }) if tree
+      if tree
+        css = tree.toCSS({
+          sourceMap: true
+          writeSourceMap: (output) -> sourceMap = output
+        })
 
       callback null, css, sourceMap
 
