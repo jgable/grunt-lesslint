@@ -32,6 +32,10 @@ class LintErrorOutput
         line: message.line,
         column: message.col
 
+      # Fix path delimiter issues
+      if source
+        source = path.resolve source
+
       isThisFile = source == file
 
       return isThisFile or @grunt.file.isMatch(importsToLint, stripPath(source, process.cwd()))
