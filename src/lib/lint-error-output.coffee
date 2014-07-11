@@ -32,6 +32,10 @@ class LintErrorOutput
         line: message.line,
         column: message.col
 
+      # Skip if we couldnt find a source file for the error
+      if source == null
+        return false
+
       # Fix path delimiter issues
       if source
         source = path.resolve source
