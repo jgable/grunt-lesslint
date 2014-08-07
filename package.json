@@ -30,21 +30,21 @@
     }
   ],
   "dependencies": {
-    "async": "~0.2.10",
+    "async": "~0.9.0",
     "cache-swap": "~0.0.5",
     "csslint": "~0.10.0",
     "less": "~1.7.0",
     "lodash": "~2.4.1",
     "strip-path": "~0.1.0",
-    "chalk": "~0.4.0",
+    "chalk": "~0.5.1",
     "source-map": "~0.1.33"
   },
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-cli": "~0.1.13",
     "grunt-coffeelint": "~0.0.8",
-    "grunt-contrib-coffee": "~0.10.1",
-    "grunt-shell": "~0.6.4",
+    "grunt-contrib-coffee": "~0.11.0",
+    "grunt-shell": "~0.7.0",
     "jasmine-focused": "~1.0.4",
     "rimraf": "~2.2.6",
     "tmp": "~0.0.23",
