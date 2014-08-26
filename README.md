@@ -1,5 +1,7 @@
 # LESS Lint Grunt plugin
-[![Build Status](https://travis-ci.org/jgable/grunt-lesslint.png)](https://travis-ci.org/jgable/grunt-lesslint) [![Dependency Status](https://david-dm.org/jgable/grunt-lesslint.png?theme=shields.io)](https://david-dm.org/jgable/grunt-lesslint) [![devDependency Status](https://david-dm.org/jgable/grunt-lesslint/dev-status.png?theme=shields.io)](https://david-dm.org/jgable/grunt-lesslint#info=devDependencies)
+[![Build Status](https://travis-ci.org/jgable/grunt-lesslint.svg)](https://travis-ci.org/jgable/grunt-lesslint)
+[![Dependency Status](https://david-dm.org/jgable/grunt-lesslint.svg)](https://david-dm.org/jgable/grunt-lesslint)
+[![devDependency Status](https://david-dm.org/jgable/grunt-lesslint/dev-status.svg)](https://david-dm.org/jgable/grunt-lesslint#info=devDependencies)
 
 Lint your [LESS](http://lesscss.org/) files using
 [CSS Lint](http://csslint.net/) from [Grunt](http://gruntjs.com/).
@@ -44,7 +46,7 @@ by adding a `csslint` option value:
 ```coffeescript
 lesslint:
   src: ['less/*.less']
-  options: 
+  options:
     csslint:
       'known-properties': false
 ```
