@@ -93,7 +93,7 @@ class LintErrorOutput
           # Pre-emptively split into lines
           fileLines[source] = fileContents[source].split('\n')
 
-        filePath = stripPath(file, process.cwd())
+        filePath = stripPath(source, process.cwd())
         lessSource = fileLines[source][line-1].slice(column)
 
         # Output the source line
