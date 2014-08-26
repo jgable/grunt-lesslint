@@ -20,6 +20,7 @@ class LintErrorOutput
     less = @result.less
     file = path.resolve(@result.file)
 
+    filePath = stripPath(file, process.cwd())
     fileContents = {}
     fileLines = {}
 
@@ -54,7 +55,7 @@ class LintErrorOutput
       fullMsg
 
     # Output how many rules broken
-    @grunt.log.writeln("#{chalk.yellow(file)} (#{messages.length})")
+    @grunt.log.writeln("#{chalk.yellow(filePath)} (#{messages.length})")
 
     # For each rule message and messages
     for fullRuleMessage, ruleMessages of messageGroups
@@ -96,7 +97,7 @@ class LintErrorOutput
         lessSource = fileLines[source][line-1].slice(column)
 
         # Output the source line
-        @grunt.log.error(chalk.gray("[Line #{line}, Column #{column+1}]:\t")+ " #{lessSource.trim()}")
+        @grunt.log.error(chalk.gray("#{filePath} [Line #{line}, Column #{column+1}]:\t")+ " #{lessSource.trim()}")
 
     errorCount
 
