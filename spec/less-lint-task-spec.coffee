@@ -228,6 +228,32 @@ describe 'LESS Lint task', ->
         expect(taskOutput).toContain '.notAFunction is undefined'
         expect(taskOutput).toContain '1 lint error in 1 file'
 
+  describe 'when the file has less options', ->
+    describe 'when the less options contains paths', ->
+      it 'will respect the passed paths', ->
+        grunt.config.init
+          pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+          lesslint:
+            src: ['**/fixtures/included-path.less']
+            options:
+              less:
+                paths: ['spec/included-path']
+
+        grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+        tasksDone = false
+        grunt.registerTask 'done', 'done',  -> tasksDone = true
+        output = []
+
+        spyOn(process.stdout, 'write').andCallFake (data='') ->
+          output.push(data.toString())
+
+        grunt.task.run(['lesslint', 'done']).start()
+        waitsFor -> tasksDone
+        runs ->
+          taskOutput = output.join('')
+          expect(taskOutput).toContain '1 file lint free.'
+
   describe 'when csslint option csslintrc is set', ->
     it 'reads css options from csslintrc file', ->
       grunt.config.init
