@@ -43,7 +43,14 @@ class LintErrorOutput
 
       isThisFile = source == file
 
-      return isThisFile or @grunt.file.isMatch(importsToLint, stripPath(source, process.cwd()))
+      # Store stripped file path
+      sourceStripped = stripPath(source, process.cwd())
+
+      # Prepare two versions of file path for matching,
+      # one with preceding slash and one without
+      sourceArray = [sourceStripped, sourceStripped + '\\']
+
+      return isThisFile or @grunt.file.isMatch(importsToLint, sourceArray)
 
     # Bug out if only import errors we don't care about
     return 0 if messages.length < 1
