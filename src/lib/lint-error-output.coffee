@@ -43,12 +43,12 @@ class LintErrorOutput
 
       isThisFile = source == file
 
-      # Store stripped file path
-      sourceStripped = stripPath(source, process.cwd())
-
       # Prepare two versions of file path for matching,
       # one with preceding slash and one without
-      sourceArray = [sourceStripped, sourceStripped + '\\']
+      sourceArray = [
+        stripPath(source, process.cwd()),
+        stripPath(source, process.cwd() + '\\')
+      ]
 
       return isThisFile or @grunt.file.isMatch(importsToLint, sourceArray)
 
