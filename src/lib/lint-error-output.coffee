@@ -55,6 +55,9 @@ class LintErrorOutput
     # Bug out if only import errors we don't care about
     return 0 if messages.length < 1
 
+    # make sure the messages are filtered out for formatters
+    @result.lint.messages = messages
+
     # Group the errors by message
     messageGroups = _.groupBy messages, ({message, rule}) ->
       fullMsg = "#{message}"
