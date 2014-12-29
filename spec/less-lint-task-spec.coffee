@@ -19,11 +19,18 @@ describe 'LESS Lint task', ->
 
     grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
     tasksDone = false
-    grunt.registerTask 'done', 'done',  -> tasksDone = true
+    grunt.registerTask 'done', 'done', -> tasksDone = true
     output = []
     spyOn(process.stdout, 'write').andCallFake (data='') ->
       output.push(data.toString())
+
+    errorCount = 0
+    grunt.task.options({
+      error: ->
+        errorCount++
+    })
     grunt.task.run(['lesslint', 'done']).start()
+
     waitsFor -> tasksDone
     runs ->
       taskOutput = output.join('')
@@ -35,6 +42,34 @@ describe 'LESS Lint task', ->
       # A little bit of a hack until csslint reports first id column instead of 0
       hasIdorBodyError = taskOutput.indexOf('#id {') > -1 || taskOutput.indexOf('body {') > -1
       expect(hasIdorBodyError).toBe true
+      expect(errorCount).toBe 1
+
+  it 'issues return code 0, if failOnError is set to false', ->
+    grunt.config.init
+      pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+      lesslint:
+        src: ['**/fixtures/file.less']
+        options:
+          failOnError: false
+
+    grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+    tasksDone = false
+    grunt.registerTask 'done', 'done',  -> tasksDone = true
+    output = []
+    spyOn(process.stdout, 'write').andCallFake (data='') ->
+      output.push(data.toString())
+
+    errorCount = 0
+    grunt.task.options({
+      error: ->
+        errorCount++
+    })
+    grunt.task.run(['lesslint', 'done']).start()
+
+    waitsFor -> tasksDone
+    runs ->
+      expect(errorCount).toBe 0
 
   describe 'when the less file is empty', ->
     it 'does not log an error', ->
