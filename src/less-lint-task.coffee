@@ -53,6 +53,8 @@ module.exports = (grunt) ->
       imports: undefined
       # Default to no caching
       cache: false
+      # Default fail on error
+      failOnError: true
 
     fileCount = 0
     errorCount = 0
@@ -83,7 +85,7 @@ module.exports = (grunt) ->
           # Show error messages and get error count back
           errorOutput = new LintErrorOutput(result, grunt)
           fileLintErrors = errorOutput.display(options.imports)
-          
+
           errorCount += fileLintErrors
 
         callback()
@@ -100,7 +102,7 @@ module.exports = (grunt) ->
       else
         grunt.log.writeln()
         grunt.log.error("#{errorCount} lint #{grunt.util.pluralize(errorCount, 'error/errors')} in #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')}.")
-        done(false)
+        done(!options.failOnError)
 
   grunt.registerTask 'lesslint:clearCache', ->
     done = @async()
