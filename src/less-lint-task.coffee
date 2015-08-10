@@ -104,6 +104,8 @@ module.exports = (grunt) ->
         grunt.log.error("#{errorCount} lint #{grunt.util.pluralize(errorCount, 'error/errors')} in #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')}.")
         done(!options.failOnError)
 
+    done() if (!@filesSrc? || @filesSrc.length == 0)
+
   grunt.registerTask 'lesslint:clearCache', ->
     done = @async()
 
