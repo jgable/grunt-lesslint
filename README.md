@@ -92,6 +92,18 @@ lesslint:
     ]
 ```
 
+### Using custom rules
+
+It is possible to create and use your own custom rules. To create rules, please refer to the [official CSSLint guidelines](https://github.com/CSSLint/csslint/wiki/Working-with-Rules). The only addition is that each custom rule file must import `CSSLint` using `{CSSLint} = require 'csslint'` for CoffeeScript or `var CSSLint = require('csslint').CSSLint;` for JavaScript.
+
+You can enable your custom rules by adding a `customRules` configuration option:
+
+```coffeescript
+lesslint:
+  options:
+    customRules: ['lint-rules/less/**/*.coffee']
+```
+
 ## Example output
 
 ```

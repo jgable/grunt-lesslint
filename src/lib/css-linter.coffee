@@ -1,6 +1,7 @@
 
 {CSSLint} = require 'csslint'
 _ = require 'lodash'
+RuleLoader = require './rule-loader'
 
 module.exports = class CssLinter
   constructor: (@options, @grunt) ->
@@ -10,6 +11,8 @@ module.exports = class CssLinter
       return callback(null, [])
 
     externalOptions = {}
+
+    RuleLoader.getRuleLoader(@grunt).configureRules(@options)
 
     rules = _.reduce CSSLint.getRules(), (memo, {id}) ->
       memo[id] = 1

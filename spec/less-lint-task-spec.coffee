@@ -389,3 +389,139 @@ describe 'LESS Lint task', ->
 
         expect(addCacheHash).toNotEqual null
         expect(addCacheHash).toNotEqual ''
+
+  describe 'when custom CSSLint rules configured', ->
+    it 'finds a violation of a custom rule', ->
+      grunt.config.init
+        pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+        lesslint:
+          options:
+            customRules: ['**/fixtures/custom-rule.coffee']
+          src: ['**/fixtures/custom-invalid.less']
+
+      grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+      tasksDone = false
+      grunt.registerTask 'done', 'done', -> tasksDone = true
+      output = []
+      spyOn(process.stdout, 'write').andCallFake (data='') ->
+        output.push(data.toString())
+
+      errorCount = 0
+      grunt.task.options({
+        error: ->
+          errorCount++
+      })
+      grunt.task.run(['lesslint', 'done']).start()
+
+      waitsFor -> tasksDone
+      runs ->
+        taskOutput = output.join('')
+        expect(taskOutput).toContain 'BACKGROUND-COLOR: #FFF;'
+        expect(taskOutput).toContain 'Uppercase letters looks bad. Properties should be in lowercase. (lowercase-properties)'
+        expect(taskOutput).toContain '1 lint error in 1 file.'
+        expect(errorCount).toBe 1
+
+    it 'does not disable the default CSSLint rule set', ->
+      grunt.config.init
+        pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+        lesslint:
+          options:
+            customRules: ['**/fixtures/custom-rule.coffee']
+          src: ['**/fixtures/file.less']
+
+      grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+      tasksDone = false
+      grunt.registerTask 'done', 'done', -> tasksDone = true
+      output = []
+      spyOn(process.stdout, 'write').andCallFake (data='') ->
+        output.push(data.toString())
+
+      errorCount = 0
+      grunt.task.options({
+        error: ->
+          errorCount++
+      })
+      grunt.task.run(['lesslint', 'done']).start()
+
+      waitsFor -> tasksDone
+      runs ->
+        taskOutput = output.join('')
+        expect(taskOutput).toContain 'padding: 0px;'
+        expect(taskOutput).toContain 'margin: 0em;'
+        expect(taskOutput).toContain 'border-width: 0pt;'
+        expect(taskOutput).toContain '4 lint errors in 1 file.'
+
+        # A little bit of a hack until csslint reports first id column instead of 0
+        hasIdorBodyError = taskOutput.indexOf('#id {') > -1 || taskOutput.indexOf('body {') > -1
+        expect(hasIdorBodyError).toBe true
+        expect(errorCount).toBe 1
+
+    xit 'does not allow custom rule configurations to affect on other targets executed later', ->
+      grunt.config.init
+        pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+        lesslint:
+          customRulesEnabled:
+            options:
+              customRules: ['**/fixtures/custom-rule.coffee']
+            src: ['**/fixtures/custom-invalid.less']
+          customRulesDisabled:
+            src: ['**/fixtures/custom-invalid.less', '**/fixtures/file.less']
+
+      grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+      tasksDone = false
+      grunt.registerTask 'done', 'done', -> tasksDone = true
+      output = []
+      spyOn(process.stdout, 'write').andCallFake (data='') ->
+        output.push(data.toString())
+
+      errorCount = 0
+      grunt.task.options({
+        error: ->
+          errorCount++
+      })
+      grunt.task.run(['lesslint:customRulesEnabled', 'lesslint:customRulesDisabled', 'done']).start()
+
+      waitsFor -> tasksDone
+      runs ->
+        taskOutput = output.join('')
+        expect(taskOutput).toContain '1 lint error in 1 file.'
+        expect(taskOutput).toContain '4 lint errors in 2 files.'
+        expect(errorCount).toBe 2
+
+    xit 'allows the same custom rule configurations to be used on other targets executed later', ->
+      grunt.config.init
+        pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+        lesslint:
+          customRuleEnabled1:
+            options:
+              customRules: ['**/fixtures/custom-rule.coffee']
+            src: ['**/fixtures/custom-invalid.less']
+          customRuleEnabled2:
+            options:
+              customRules: ['**/fixtures/custom-rule.coffee']
+            src: ['**/fixtures/custom-invalid.less', '**/fixtures/valid.less']
+
+      grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+      tasksDone = false
+      grunt.registerTask 'done', 'done', -> tasksDone = true
+      output = []
+      spyOn(process.stdout, 'write').andCallFake (data='') ->
+        output.push(data.toString())
+
+      errorCount = 0
+      grunt.task.options({
+        error: ->
+          errorCount++
+      })
+      grunt.task.run(['lesslint:customRuleEnabled1', 'lesslint:customRuleEnabled2', 'done']).start()
+
+      waitsFor -> tasksDone
+      runs ->
+        taskOutput = output.join('')
+        expect(taskOutput).toContain '1 lint error in 1 file.'
+        expect(taskOutput).toContain '1 lint error in 2 files.'
+        expect(errorCount).toBe 2
