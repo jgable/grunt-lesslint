@@ -13,6 +13,3 @@ CSSLint.addRule
       if /([A-Z])/.test(event.property.text)
         reporter.report('Uppercase letters looks bad.', event.line, event.col, rule)
     )
-
-
-
