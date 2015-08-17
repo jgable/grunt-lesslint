@@ -458,7 +458,7 @@ describe 'LESS Lint task', ->
         expect(hasIdorBodyError).toBe true
         expect(errorCount).toBe 1
 
-    xit 'does not allow custom rule configurations to affect on other targets executed later', ->
+    it 'does not allow custom rule configurations to affect on other targets executed later', ->
       grunt.config.init
         pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
 
@@ -491,7 +491,7 @@ describe 'LESS Lint task', ->
         expect(taskOutput).toContain '4 lint errors in 2 files.'
         expect(errorCount).toBe 2
 
-    xit 'allows the same custom rule configurations to be used on other targets executed later', ->
+    it 'allows the same custom rule configurations to be used on other targets executed later', ->
       grunt.config.init
         pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
 
