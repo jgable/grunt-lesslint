@@ -51,6 +51,8 @@ module.exports = (grunt) ->
       csslint: grunt.config.get('csslint.options')
       # Default to no imports
       imports: undefined
+      # Default to no custom rules
+      customRules: undefined
       # Default to no caching
       cache: false
       # Default fail on error
