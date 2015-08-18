@@ -12,7 +12,7 @@ module.exports = class CssLinter
 
     externalOptions = {}
 
-    RuleLoader.getRuleLoader(@grunt).configureRules(@options)
+    disabledRules = RuleLoader.getRuleLoader(@grunt).configureRules(@options)
 
     rules = _.reduce CSSLint.getRules(), (memo, {id}) ->
       memo[id] = 1
@@ -30,6 +30,10 @@ module.exports = class CssLinter
       if cssLintOptions[id]
         rules[id] = cssLintOptions[id]
       else
+        delete rules[id]
+
+    for id in disabledRules
+      if id of rules
         delete rules[id]
 
     result = CSSLint.verify(css, rules)

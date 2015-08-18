@@ -20,7 +20,7 @@ module.exports.RuleLoader = class RuleLoader
 
   configureRules: (options) ->
     enabledRules = @enableConfiguredRuleFiles options
-    @disableNonEnabledCustomRules enabledRules, options
+    @getDisabledRules enabledRules, options
 
   enableConfiguredRuleFiles: (options) ->
     enabledRules = []
@@ -30,12 +30,6 @@ module.exports.RuleLoader = class RuleLoader
       for id, ruleFile of ruleFiles
         enabledRules = _.union enabledRules, @enableRuleFile ruleFile
     enabledRules
-
-  disableNonEnabledCustomRules: (enabledRules, options) ->
-
-    disabledRules = @getDisabledRules enabledRules
-    disabledOption = _.transform disabledRules, @convertDisabledRulesToCsslintConfiguration, {}
-    options.csslint = _.merge disabledOption, options.csslint
 
   enableRuleFile: (ruleFile) ->
     unless ruleFile of @rulesPerFile
@@ -53,8 +47,8 @@ module.exports.RuleLoader = class RuleLoader
   getNewRuleNames: (previousRuleNames) ->
     _.difference @getCurrentRuleNames(), previousRuleNames
 
-  getDisabledRules: (enabledRules) ->
-    _(@rulesPerFile).values().flatten().xor(enabledRules).value()
-
-  convertDisabledRulesToCsslintConfiguration: (transformResult, rule) ->
-    transformResult[rule] = false
+  getDisabledRules: (enabledRules, options) ->
+    configuredRules = _.keys(options.csslint)
+    _(@rulesPerFile).values().flatten().filter((rule) ->
+      rule not in enabledRules and rule not in configuredRules
+    ).value()
