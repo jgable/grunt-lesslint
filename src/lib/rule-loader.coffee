@@ -33,6 +33,7 @@ module.exports.RuleLoader = class RuleLoader
 
   enableRuleFile: (ruleFile) ->
     unless ruleFile of @rulesPerFile
+      @grunt.verbose.writeln 'Loading custom rules from ' + ruleFile.cyan
       rulesBefore = @getCurrentRuleNames()
       @require path.resolve(ruleFile)
       newRules = @getNewRuleNames rulesBefore
