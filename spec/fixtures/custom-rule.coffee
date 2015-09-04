@@ -1,4 +1,4 @@
-{CSSLint} = require 'csslint'
+CSSLint = require(process.cwd()).CSSLint
 
 CSSLint.addRule
 

@@ -117,3 +117,5 @@ module.exports = (grunt) ->
       grunt.log.error(err.message) if err
 
       done()
+
+module.exports.CSSLint = CSSLint
