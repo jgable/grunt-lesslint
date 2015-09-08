@@ -336,6 +336,30 @@ describe 'LESS Lint task', ->
         taskOutput = output.join('')
         expect(taskOutput).toContain '1 file lint free'
 
+    describe 'when csslintrc contains comments', ->
+      it 'removes the comments before parsing the JSON', ->
+        grunt.config.init
+          pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+          lesslint:
+            options:
+              csslint:
+                csslintrc: 'spec/fixtures/.csslintrc-comments'
+            src: ['**/fixtures/csslintrc.less']
+
+        grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+        tasksDone = false
+        grunt.registerTask 'done', 'done',  -> tasksDone = true
+        output = []
+        spyOn(process.stdout, 'write').andCallFake (data='') ->
+          output.push(data.toString())
+        grunt.task.run(['lesslint', 'done']).start()
+        waitsFor -> tasksDone
+        runs ->
+          taskOutput = output.join('')
+          expect(taskOutput).toContain 'margin: 0 !important'
+          expect(taskOutput).toContain '1 lint error in 1 file'
+
   describe 'when cache option is set', ->
     it 'caches previously linted files for faster performance', ->
       grunt.config.init
