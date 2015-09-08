@@ -2,6 +2,7 @@
 {CSSLint} = require 'csslint'
 _ = require 'lodash'
 RuleLoader = require './rule-loader'
+stripJsonComments = require 'strip-json-comments'
 
 module.exports = class CssLinter
   constructor: (@options, @grunt) ->
@@ -21,7 +22,7 @@ module.exports = class CssLinter
 
     cssLintOptions = @options.csslint
     if cssLintOptions?.csslintrc
-      externalOptions = @grunt.file.readJSON cssLintOptions.csslintrc
+      externalOptions = JSON.parse stripJsonComments @grunt.file.read cssLintOptions.csslintrc
       delete cssLintOptions.csslintrc
 
     _.extend(cssLintOptions, externalOptions)
