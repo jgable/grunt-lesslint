@@ -40,8 +40,8 @@ configure the LESS parser and the CSS Lint validator.
 
 ### CSS Lint
 
-You can configure the CSS Lint validator, such as for disabling certain rules,
-by adding a `csslint` option value:
+You can configure the CSS Lint validator, such as for disabling certain rules
+or loading a `.csslintrc` file, by adding a `csslint` option value:
 
 ```coffeescript
 lesslint:
@@ -49,6 +49,7 @@ lesslint:
   options:
     csslint:
       'known-properties': false
+      csslintrc: '.csslintrc'
 ```
 
 ### LESS
