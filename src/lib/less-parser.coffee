@@ -2,7 +2,7 @@
 path = require 'path'
 
 _ = require 'lodash'
-{Parser} = require 'less'
+less = require 'less'
 
 defaultLessOptions =
   cleancss: false
@@ -25,12 +25,12 @@ module.exports = class LessParser
     @opts = _.extend({
       filename: path.resolve(fileName),
       paths: paths,
-      sourceMaps: true
+      sourceMap: {}
     }, opts)
-    @parser = new Parser(@opts)
 
-  parse: (less, callback) ->
+  render: (contents, callback) ->
     try
-      @parser.parse less, callback
+      less.render contents, @opts, (err, output) ->
+        callback err, output?.css, output?.map
     catch err
       callback err

@@ -50,20 +50,6 @@ class LessFile
     @digest
 
   getCss: (callback) ->
-    @getTree (err, tree) ->
-      return callback(err) if err
-
-      css = sourceMap = ''
-      if tree
-        css = tree.toCSS({
-          sourceMap: true
-          writeSourceMap: (output) -> sourceMap = output
-        })
-
-      callback null, css, sourceMap
-
-  # Just in case someone needs just the tree for something later
-  getTree: (callback) ->
     contents = @getContents()
 
     # Bug out early if no LESS content
@@ -71,7 +57,8 @@ class LessFile
 
     parser = new LessParser(@filePath, @options)
 
-    parser.parse contents, callback
+    parser.render contents, callback
+
 
 # An in-memory hold of import contents and hashes
 sharedImportsContents = {}
