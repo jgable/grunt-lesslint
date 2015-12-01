@@ -34,7 +34,7 @@
     "cache-swap": "~0.1.0",
     "chalk": "~0.5.1",
     "csslint": "~0.10.0",
-    "less": "~1.7.5",
+    "less": "~2.5.3",
     "lodash": "~2.4.1",
     "source-map": "~0.1.33",
     "strip-json-comments": "^1.0.4",
