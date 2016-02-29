@@ -23,12 +23,7 @@
   },
   "homepage": "http://jgable.github.io/grunt-lesslint",
   "author": "Jacob Gable <jacob.gable@gmail.com>",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://raw.github.com/jgable/grunt-lesslint/master/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "dependencies": {
     "async": "~0.9.0",
     "cache-swap": "~0.1.0",
