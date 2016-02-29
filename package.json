@@ -1,6 +1,6 @@
 {
   "name": "grunt-lesslint",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "Grunt task for validating LESS files with CSS Lint",
   "main": "tasks/less-lint-task",
   "keywords": [
