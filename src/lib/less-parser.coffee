@@ -18,11 +18,11 @@ module.exports = class LessParser
     opts = _.defaults(opts.less || {}, defaultLessOptions)
     paths = [path.dirname(path.resolve(fileName))]
 
-    if opts and opts.paths
+    if opts.paths
       paths = paths.concat(opts.paths)
 
     # Set the options and create the parser
-    @opts = _.extend({
+    @opts = _.defaults({
       filename: path.resolve(fileName),
       paths: paths,
       sourceMap: {}
