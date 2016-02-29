@@ -23,6 +23,9 @@
   },
   "homepage": "http://jgable.github.io/grunt-lesslint",
   "author": "Jacob Gable <jacob.gable@gmail.com>",
+  "contributors": [
+    "David Pärsson <david@parsson.se>"
+  ],
   "license": "MIT",
   "dependencies": {
     "async": "~0.9.0",
