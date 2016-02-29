@@ -116,3 +116,9 @@ Values of 0 shouldn't have units specified. You don't need to specify units when
 
 >> 1 linting error in 56 files.
 ```
+
+## Breaking changes
+
+- In v3.0.0 `options` is no longer passed to the LESS compiler. `options.less` is passed instead, as described by the documentation.
+- In v2.0.0 the LESS compiler was updated to v2.5.3
+
