@@ -52,6 +52,6 @@
     "xml2js": "~0.4.1"
   },
   "peerDependencies": {
-    "grunt": ">=0.4.0"
+    "grunt": ">=0.4.5"
   }
 }
