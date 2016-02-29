@@ -15,11 +15,11 @@ defaultLessOptions =
 module.exports = class LessParser
   constructor: (fileName, opts) ->
     # Make sure we have some default options if none passed
-    opts = _.defaults(opts || {}, defaultLessOptions)
+    opts = _.defaults(opts.less || {}, defaultLessOptions)
     paths = [path.dirname(path.resolve(fileName))]
 
-    if opts.less and opts.less.paths
-      paths = paths.concat(opts.less.paths)
+    if opts and opts.paths
+      paths = paths.concat(opts.paths)
 
     # Set the options and create the parser
     @opts = _.extend({
