@@ -19,7 +19,7 @@ module.exports = class LessParser
     paths = [path.dirname(path.resolve(fileName))]
 
     if opts and opts.paths
-      paths = paths.concat(opts.less.paths)
+      paths = paths.concat(opts.paths)
 
     # Set the options and create the parser
     @opts = _.extend({
