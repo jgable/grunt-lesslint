@@ -22,7 +22,7 @@ module.exports = class LessParser
       paths = paths.concat(opts.paths)
 
     # Set the options and create the parser
-    @opts = _.extend({
+    @opts = _.defaults({
       filename: path.resolve(fileName),
       paths: paths,
       sourceMap: {}
