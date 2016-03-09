@@ -52,6 +52,72 @@ lesslint:
       csslintrc: '.csslintrc'
 ```
 
+### Allow lint warnings without failing the grunt task
+
+The `failOnWarning` configuration option is now available to allow any failing
+lint rules set to "warn" to not fail the grunt task.
+
+To maintain backwards-compatibility: 
+- This option's value is defaulted to `failOnWarning: true`, which will continue 
+   to fail the grunt task on *any* failed rule. When using the default option, the 
+   following example output shows the task failure due to failed lint rules 
+   configured as "warnings":
+
+```
+      >> 58 lint issues in 167 files (0 errors, 58 warnings)
+      Warning: Task "lesslint" failed. Use --force to continue.
+```
+
+- Setting `failOnError: false` will act as a **complete** override for both 
+   settings: don't fail grunt task if EITHER lint rule __warning(s)__ or __error(s)__ 
+   are found. Example Config:
+
+```coffeescript
+      lesslint:
+        src: ['less/*.less']
+        options:
+          csslint:
+            'known-properties': true
+            csslintrc: '.csslintrc'
+          failOnError: false
+```
+
+By setting `failOnWarning: false`, any failing rule configured
+to "warn" will no longer fail the grunt task:
+
+```coffeescript
+lesslint:
+  src: ['less/*.less']
+  options:
+    csslint:
+      'known-properties': true
+      csslintrc: '.csslintrc'
+    failOnWarning: false
+```
+
+This example's task output shows the task completing without
+failure, even when there are failed lint rules configured as "warnings":
+
+```
+>> 58 lint issues in 167 files (0 errors, 58 warnings)
+Done, without errors.
+```
+
+__Notes:__
+
+The new task summary output is borrowed from equivalent output used by eslint:
+```
+✖ 31 problems (0 errors, 31 warnings)
+```
+
+This option is meant to afford large projects the recourse of a staged adoption
+strategy of specific CSS rules. New rules may be activated to trigger a warning
+notification across teams without breaking the build and deployment. Once
+existing infractions are addressed, those rules would then be configured from
+"warning" setting to "error", to finalize their enforcement (by blocking any
+subsequent build attempts).
+
+
 ### LESS
 
 You can configure the LESS parser, such as for adding include paths,
@@ -121,4 +187,3 @@ Values of 0 shouldn't have units specified. You don't need to specify units when
 
 - In v3.0.0 `options` is no longer passed to the LESS compiler. `options.less` is passed instead, as described by the documentation.
 - In v2.0.0 the LESS compiler was updated to v2.5.3
-

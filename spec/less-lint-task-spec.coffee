@@ -37,8 +37,7 @@ describe 'LESS Lint task', ->
       expect(taskOutput).toContain 'padding: 0px;'
       expect(taskOutput).toContain 'margin: 0em;'
       expect(taskOutput).toContain 'border-width: 0pt;'
-      expect(taskOutput).toContain '4 lint errors in 1 file.'
-
+      expect(taskOutput).toContain '4 lint issues in 1 file (0 errors, 4 warnings)'
       # A little bit of a hack until csslint reports first id column instead of 0
       hasIdorBodyError = taskOutput.indexOf('#id {') > -1 || taskOutput.indexOf('body {') > -1
       expect(hasIdorBodyError).toBe true
@@ -70,6 +69,61 @@ describe 'LESS Lint task', ->
     waitsFor -> tasksDone
     runs ->
       expect(errorCount).toBe 0
+
+  it 'issues return code 0, if failOnWarning is set to false, with failed rule warnings', ->
+    grunt.config.init
+      pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+      lesslint:
+        src: ['**/fixtures/imports.less']
+        options:
+          imports: ['**/fixtures/file.less']
+          failOnWarning: false
+
+    grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+    tasksDone = false
+    grunt.registerTask 'done', 'done',  -> tasksDone = true
+    output = []
+    spyOn(process.stdout, 'write').andCallFake (data='') ->
+      output.push(data.toString())
+
+    errorCount = 0
+    grunt.task.options({
+      error: ->
+        errorCount++
+    })
+    grunt.task.run(['lesslint', 'done']).start()
+
+    waitsFor -> tasksDone
+    runs ->
+      expect(errorCount).toBe 0
+
+  it 'issues return code 1, if failOnWarning is set to false, with failed rule errors', ->
+    grunt.config.init
+      pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+      lesslint:
+        src: ['**/fixtures/invalid.less']
+        options:
+          failOnWarning: false
+
+    grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+    tasksDone = false
+    grunt.registerTask 'done', 'done',  -> tasksDone = true
+    output = []
+    spyOn(process.stdout, 'write').andCallFake (data='') ->
+      output.push(data.toString())
+
+    errorCount = 0
+    grunt.task.options({
+      error: ->
+        errorCount++
+    })
+    grunt.task.run(['lesslint', 'done']).start()
+
+    waitsFor -> tasksDone
+    runs ->
+      expect(errorCount).toBe 1
 
   describe 'when the less file is empty', ->
     it 'does not log an error', ->
@@ -120,7 +174,7 @@ describe 'LESS Lint task', ->
           expect(taskOutput).toContain 'padding: 0px;'
           expect(taskOutput).toContain 'margin: 0em;'
           expect(taskOutput).toContain 'border-width: 0pt;'
-          expect(taskOutput).toContain '4 lint errors in 1 file.'
+          expect(taskOutput).toContain '4 lint issues in 1 file (0 errors, 4 warnings)'
           expect(taskOutput).not.toContain 'Failed to find map CSS'
 
           # A little bit of a hack until csslint reports first id column instead of 0
@@ -151,7 +205,7 @@ describe 'LESS Lint task', ->
           expect(taskOutput).toContain 'padding: 0px;'
           expect(taskOutput).toContain 'margin: 0em;'
           expect(taskOutput).toContain 'border-width: 0pt;'
-          expect(taskOutput).toContain '4 lint errors in 1 file.'
+          expect(taskOutput).toContain '4 lint issues in 1 file (0 errors, 4 warnings)'
           expect(taskOutput).not.toContain 'Failed to find map CSS'
 
           # A little bit of a hack until csslint reports first id column instead of 0
@@ -241,7 +295,7 @@ describe 'LESS Lint task', ->
       runs ->
         taskOutput = output.join('')
         expect(taskOutput).toContain "'does-not-exist.less' wasn't found"
-        expect(taskOutput).toContain '1 lint error in 1 file'
+        expect(taskOutput).toContain '1 lint issue in 1 file (1 error, 0 warnings)'
 
     it 'reports the compile errors for missing functions', ->
       grunt.config.init
@@ -261,7 +315,7 @@ describe 'LESS Lint task', ->
       runs ->
         taskOutput = output.join('')
         expect(taskOutput).toContain '.notAFunction is undefined'
-        expect(taskOutput).toContain '1 lint error in 1 file'
+        expect(taskOutput).toContain '1 lint issue in 1 file (1 error, 0 warnings)'
 
   describe 'when the file has less options', ->
     describe 'when the less options contains paths', ->
@@ -311,7 +365,7 @@ describe 'LESS Lint task', ->
       runs ->
         taskOutput = output.join('')
         expect(taskOutput).toContain 'margin: 0 !important'
-        expect(taskOutput).toContain '1 lint error in 1 file'
+        expect(taskOutput).toContain '1 lint issue in 1 file (0 errors, 1 warning)'
 
     it 'reads css options from csslintrc file and picks up other rules as well', ->
       grunt.config.init
@@ -358,7 +412,7 @@ describe 'LESS Lint task', ->
         runs ->
           taskOutput = output.join('')
           expect(taskOutput).toContain 'margin: 0 !important'
-          expect(taskOutput).toContain '1 lint error in 1 file'
+          expect(taskOutput).toContain '1 lint issue in 1 file (0 errors, 1 warning)'
 
   describe 'when cache option is set', ->
     it 'caches previously linted files for faster performance', ->
@@ -443,7 +497,7 @@ describe 'LESS Lint task', ->
         taskOutput = output.join('')
         expect(taskOutput).toContain 'BACKGROUND-COLOR: #FFF;'
         expect(taskOutput).toContain 'Uppercase letters looks bad. Properties should be in lowercase. (lowercase-properties)'
-        expect(taskOutput).toContain '1 lint error in 1 file.'
+        expect(taskOutput).toContain '1 lint issue in 1 file (0 errors, 1 warning)'
         expect(errorCount).toBe 1
 
     it 'does not disable the default CSSLint rule set', ->
@@ -475,7 +529,7 @@ describe 'LESS Lint task', ->
         expect(taskOutput).toContain 'padding: 0px;'
         expect(taskOutput).toContain 'margin: 0em;'
         expect(taskOutput).toContain 'border-width: 0pt;'
-        expect(taskOutput).toContain '4 lint errors in 1 file.'
+        expect(taskOutput).toContain '4 lint issues in 1 file (0 errors, 4 warnings)'
 
         # A little bit of a hack until csslint reports first id column instead of 0
         hasIdorBodyError = taskOutput.indexOf('#id {') > -1 || taskOutput.indexOf('body {') > -1
@@ -511,8 +565,7 @@ describe 'LESS Lint task', ->
       waitsFor -> tasksDone
       runs ->
         taskOutput = output.join('')
-        expect(taskOutput).toContain '1 lint error in 1 file.'
-        expect(taskOutput).toContain '4 lint errors in 2 files.'
+        expect(taskOutput).toContain '4 lint issues in 2 files (0 errors, 4 warnings)'
         expect(errorCount).toBe 2
 
     it 'allows the same custom rule configurations to be used on other targets executed later', ->
@@ -546,6 +599,5 @@ describe 'LESS Lint task', ->
       waitsFor -> tasksDone
       runs ->
         taskOutput = output.join('')
-        expect(taskOutput).toContain '1 lint error in 1 file.'
-        expect(taskOutput).toContain '1 lint error in 2 files.'
+        expect(taskOutput).toContain '1 lint issue in 2 files (0 errors, 1 warning)'
         expect(errorCount).toBe 2

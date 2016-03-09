@@ -11,9 +11,12 @@ class LintErrorOutput
 
   display: (importsToLint) ->
     sourceMap = new SourceMapConsumer(@result.sourceMap)
-    
-    # Keep track of number of errors displayed
-    errorCount = 0
+
+    # Keep track of number of errors & warnings displayed = total issues
+    issueCounts = {
+      warnings: 0,
+      errors: 0
+    }
 
     # Shorthand references to result values
     messages = @result.lint.messages
@@ -53,7 +56,7 @@ class LintErrorOutput
       return isThisFile or @grunt.file.isMatch(importsToLint, sourceArray)
 
     # Bug out if only import errors we don't care about
-    return 0 if messages.length < 1
+    return issueCounts if messages.length < 1
 
     # make sure the messages are filtered out for formatters
     @result.lint.messages = messages
@@ -76,7 +79,11 @@ class LintErrorOutput
       @grunt.log.writeln(fullRuleMessage + chalk.grey(" (#{rule.id})"))
 
       for message in ruleMessages
-        errorCount += 1
+        # count all failed rules configured to "warning" vs "error"
+        if message.type is 'error'
+          issueCounts.errors += 1
+        else
+          issueCounts.warnings += 1
 
         # Account for global errors and rollup errors, don't show source line
         continue if message.line == 0 or message.rollup
@@ -90,7 +97,7 @@ class LintErrorOutput
 
         # Store this for later access by reporters
         message.lessLine = { line, column }
-        
+
         # Get the contents and split into lines if not already done
         unless fileContents[source]
           if isThisFile
@@ -109,6 +116,6 @@ class LintErrorOutput
         # Output the source line
         @grunt.log.error(chalk.gray("#{filePath} [Line #{line}, Column #{column+1}]:\t")+ " #{lessSource.trim()}")
 
-    errorCount
+    issueCounts
 
 module.exports = LintErrorOutput
