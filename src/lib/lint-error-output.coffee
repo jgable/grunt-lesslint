@@ -62,8 +62,9 @@ class LintErrorOutput
     @result.lint.messages = messages
 
     # Group the errors by message
-    messageGroups = _.groupBy messages, ({message, rule}) ->
+    messageGroups = _.groupBy messages, ({message, rule, type}) ->
       fullMsg = "#{message}"
+      fullMsg = "(#{type}) #{fullMsg}" if type? and type.length isnt 0
       fullMsg += " #{rule.desc}" if rule.desc and rule.desc isnt message
       fullMsg
 
