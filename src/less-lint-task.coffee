@@ -57,9 +57,12 @@ module.exports = (grunt) ->
       cache: false
       # Default fail on error
       failOnError: true
+      # Default fail on warning
+      failOnWarning: true
 
     fileCount = 0
     errorCount = 0
+    warningCount = 0
     results = {}
 
     queue = async.queue (file, callback) ->
@@ -86,9 +89,10 @@ module.exports = (grunt) ->
           results[file] = lintResult
           # Show error messages and get error count back
           errorOutput = new LintErrorOutput(result, grunt)
-          fileLintErrors = errorOutput.display(options.imports)
+          fileLintIssues = errorOutput.display(options.imports)
 
-          errorCount += fileLintErrors
+          errorCount += fileLintIssues.errors
+          warningCount += fileLintIssues.warnings
 
         callback()
 
@@ -98,13 +102,15 @@ module.exports = (grunt) ->
     queue.drain = ->
       writeToFormatters(options, results)
 
-      if errorCount is 0
+      totalIssueCount = warningCount + errorCount
+
+      if totalIssueCount is 0
         grunt.log.ok("#{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')} lint free.")
         done()
       else
         grunt.log.writeln()
-        grunt.log.error("#{errorCount} lint #{grunt.util.pluralize(errorCount, 'error/errors')} in #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')}.")
-        done(!options.failOnError)
+        grunt.log.error("#{totalIssueCount} lint #{grunt.util.pluralize(totalIssueCount, 'issue/issues')} in #{fileCount} #{grunt.util.pluralize(fileCount, 'file/files')} (#{errorCount} #{grunt.util.pluralize(errorCount, 'error/errors')}, #{warningCount} #{grunt.util.pluralize(warningCount, 'warning/warnings')})")
+        done(((!options.failOnError || errorCount is 0) && (!options.failOnWarning || warningCount is 0 || !options.failOnError)))
 
     done() if (!@filesSrc? || @filesSrc.length == 0)
 
