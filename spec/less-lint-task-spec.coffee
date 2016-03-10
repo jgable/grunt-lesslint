@@ -414,6 +414,38 @@ describe 'LESS Lint task', ->
           expect(taskOutput).toContain 'margin: 0 !important'
           expect(taskOutput).toContain '1 lint issue in 1 file (0 errors, 1 warning)'
 
+    describe 'when csslintrs has rules configured as errors', ->
+      it 'should treat csslint error rules as errors', ->
+        grunt.config.init
+          pkg: grunt.file.readJSON(path.join(__dirname, 'fixtures', 'package.json'))
+
+          lesslint:
+            src: ['**/fixtures/file.less']
+            options:
+              failOnWarning: false
+              csslint:
+                csslintrc: 'spec/fixtures/.csslintrc-ids-error'
+
+        grunt.loadTasks(path.resolve(__dirname, '..', 'tasks'))
+        tasksDone = false
+        grunt.registerTask 'done', 'done',  -> tasksDone = true
+        output = []
+        spyOn(process.stdout, 'write').andCallFake (data='') ->
+          output.push(data.toString())
+
+        errorCount = 0
+        grunt.task.options({
+          error: ->
+            errorCount++
+        })
+        grunt.task.run(['lesslint', 'done']).start()
+
+        waitsFor -> tasksDone
+        runs ->
+          taskOutput = output.join('')
+          expect(taskOutput).toContain '4 lint issues in 1 file (1 error, 3 warnings)'
+          expect(errorCount).toBe 1
+
   describe 'when cache option is set', ->
     it 'caches previously linted files for faster performance', ->
       grunt.config.init
