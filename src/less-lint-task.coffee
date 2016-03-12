@@ -88,7 +88,7 @@ module.exports = (grunt) ->
           # Save for later use in formatters
           results[file] = lintResult
           # Show error messages and get error count back
-          errorOutput = new LintErrorOutput(result, grunt)
+          errorOutput = new LintErrorOutput(result, options, grunt)
           fileLintIssues = errorOutput.display(options.imports)
 
           errorCount += fileLintIssues.errors
