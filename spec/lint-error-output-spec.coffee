@@ -13,7 +13,7 @@ describe 'lint-error-output', ->
     it 'can process errors with no lines', (done) ->
       testResult = _.clone(exampleErrorResult)
       testResult.sourceMap = JSON.parse(testResult.sourceMap)
-      output = new LintErrorOutput(testResult, grunt)
+      output = new LintErrorOutput(testResult, {failOnError: true, failOnWarning: true}, grunt)
 
       results = ''
       addResults = (msg) -> results += msg + '\n'

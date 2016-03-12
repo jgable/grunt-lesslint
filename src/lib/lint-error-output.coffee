@@ -7,7 +7,7 @@ chalk = require 'chalk'
 stripPath = require 'strip-path'
 
 class LintErrorOutput
-  constructor: (@result, @grunt) ->
+  constructor: (@result, @options, @grunt) ->
 
   display: (importsToLint) ->
     sourceMap = new SourceMapConsumer(@result.sourceMap)
@@ -64,7 +64,7 @@ class LintErrorOutput
     # Group the errors by message
     messageGroups = _.groupBy messages, ({message, rule, type}) ->
       fullMsg = "#{message}"
-      fullMsg = "(#{type}) #{fullMsg}" if type? and type.length isnt 0
+      fullMsg = "#{fullMsg}" if type? and type.length isnt 0
       fullMsg += " #{rule.desc}" if rule.desc and rule.desc isnt message
       fullMsg
 
@@ -115,7 +115,11 @@ class LintErrorOutput
         lessSource = fileLines[source][line-1].slice(column)
 
         # Output the source line
-        @grunt.log.error(chalk.gray("#{filePath} [Line #{line}, Column #{column+1}]:\t")+ " #{lessSource.trim()}")
+        output = chalk.gray("#{filePath} [Line #{line}, Column #{column+1}]:\t")+ " #{lessSource.trim()}"
+        if @options.failOnError && (message.type is 'error' || @options.failOnWarning)
+          @grunt.log.error(output)
+        else
+          @grunt.log.writeln("   " + output)
 
     issueCounts
 
