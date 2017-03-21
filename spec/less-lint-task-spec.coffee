@@ -268,9 +268,9 @@ describe 'LESS Lint task', ->
         parseString reportXml, (error, parsedReport) -> report = parsedReport
         errors = report.csslint.file[0].issue
         expect(errors.length).toBe 4
-        expect(errors[0].$.line).toBe '1'
-        expect(errors[1].$.line).toBe '4'
-        expect(errors[2].$.line).toBe '7'
+        expect(errors[0].$.line).toBe '6'
+        expect(errors[1].$.line).toBe '8'
+        expect(errors[2].$.line).toBe '2'
 
         # A little hack for csslint not reporting proper column on ids in selectors
         reportedEitherBodyOrIdLine = errors[3].$.line == '10' || errors[3].$.line == '0'
