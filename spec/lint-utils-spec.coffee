@@ -30,14 +30,14 @@ describe 'lint-utils', ->
 
       less = fs.readFileSync(path.join(__dirname, 'fixtures', 'file.less'), 'utf8').split('\n')
       expect(linter.getPropertyName(less[0])).toBe null
-      expect(linter.getPropertyName(less[1])).toBe 'padding'
-      expect(linter.getPropertyName(less[2])).toBe null
+      expect(linter.getPropertyName(less[1])).toBe null
+      expect(linter.getPropertyName(less[2])).toBe 'border-width'
       expect(linter.getPropertyName(less[3])).toBe null
-      expect(linter.getPropertyName(less[4])).toBe 'margin'
+      expect(linter.getPropertyName(less[4])).toBe null
       expect(linter.getPropertyName(less[5])).toBe null
-      expect(linter.getPropertyName(less[6])).toBe null
-      expect(linter.getPropertyName(less[7])).toBe 'border-width'
-      expect(linter.getPropertyName(less[8])).toBe null
+      expect(linter.getPropertyName(less[6])).toBe 'margin'
+      expect(linter.getPropertyName(less[7])).toBe null
+      expect(linter.getPropertyName(less[8])).toBe 'padding'
       expect(linter.getPropertyName(less[9])).toBe null
       expect(linter.getPropertyName(less[10])).toBe null
       expect(linter.getPropertyName(less[11])).toBe 'height'
@@ -48,8 +48,8 @@ describe 'lint-utils', ->
   describe '.findPropertyLineNumber()', ->
     it 'returns the line number of the next line with the given property name', ->
       less = fs.readFileSync(path.join(__dirname, 'fixtures', 'file.less'), 'utf8')
-      expect(linter.findPropertyLineNumber(less, 0, 'padding')).toBe 1
-      expect(linter.findPropertyLineNumber(less, 2, 'padding')).toBe -1
-      expect(linter.findPropertyLineNumber(less, 4, 'margin')).toBe 4
-      expect(linter.findPropertyLineNumber(less, null, 'border-width')).toBe 7
+      expect(linter.findPropertyLineNumber(less, 0, 'padding')).toBe 8
+      expect(linter.findPropertyLineNumber(less, 2, 'padding')).toBe 8
+      expect(linter.findPropertyLineNumber(less, 4, 'margin')).toBe 6
+      expect(linter.findPropertyLineNumber(less, null, 'border-width')).toBe 2
       expect(linter.findPropertyLineNumber(less, Infinity, 'border-width')).toBe -1
