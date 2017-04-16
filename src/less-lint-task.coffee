@@ -43,6 +43,9 @@ module.exports = (grunt) ->
       formatterOutput += formatter.endFormat()
       grunt.file.write(dest, formatterOutput)
 
+  if 0 === this.filesSrc.length
+    return grunt.log.error("No files to process")
+
   grunt.registerMultiTask 'lesslint', 'Validate LESS files with CSS Lint', ->
     options = @options
       # Default to the less task options
