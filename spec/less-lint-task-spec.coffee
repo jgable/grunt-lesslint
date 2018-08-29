@@ -294,7 +294,7 @@ describe 'LESS Lint task', ->
       waitsFor -> tasksDone
       runs ->
         taskOutput = output.join('')
-        expect(taskOutput).toContain "'does-not-exist.less' wasn't found"
+        expect(taskOutput).toContain "'does-not-exist' wasn't found"
         expect(taskOutput).toContain '1 lint issue in 1 file (1 error, 0 warnings)'
 
     it 'reports the compile errors for missing functions', ->
